@@ -716,37 +716,37 @@ void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surfac
 
 void controls (struct hero *griel) {
 
-	SDL_Event keystroke2;
+	SDL_Event keystroke;
 
 	while (SDL_PollEvent(&keystroke2)) {
-		if (keystroke2.type == SDL_QUIT)
+		if (keystroke.type == SDL_QUIT)
 			exit(0);
-		if (keystroke2.type == SDL_KEYDOWN) {
-			if (keystroke2.key.keysym.sym == SDLK_ESCAPE) {
+		if (keystroke.type == SDL_KEYDOWN) {
+			if (keystroke.key.keysym.sym == SDLK_ESCAPE) {
 				if ((griel->locked == 0) && (griel->deathanimation == 0)) {
 					griel->locked = 1;
 					griel->direction = 6;
 				}
 			}
-			if (keystroke2.key.keysym.sym == SDLK_UP) {
+			if (keystroke.key.keysym.sym == SDLK_UP) {
 				if ((griel->locked == 0) && (griel->positiony > 0)) {
 					griel->locked = 1;
 					griel->direction = 1;
 				}
 			}
-			if (keystroke2.key.keysym.sym == SDLK_DOWN) {
+			if (keystroke.key.keysym.sym == SDLK_DOWN) {
 				if ((griel->locked == 0) && (griel->positiony < 10)) {
 					griel->locked = 1;
 					griel->direction = 2;
 				}
 			}
-			if (keystroke2.key.keysym.sym == SDLK_LEFT) {
+			if (keystroke.key.keysym.sym == SDLK_LEFT) {
 				if ((griel->locked == 0) && (griel->positionx > 0)) {
 					griel->locked = 1;
 					griel->direction = 3;
 				}
 			}
-			if (keystroke2.key.keysym.sym == SDLK_RIGHT) {
+			if (keystroke.key.keysym.sym == SDLK_RIGHT) {
 				if ((griel->locked == 0) && (griel->positionx < 15)) {
 					griel->locked = 1;
 					griel->direction = 4;
@@ -759,15 +759,15 @@ void controls (struct hero *griel) {
 
 void load_music(Mix_Music *bso, int round) {
 
-	if (round == 0)
+	if ((round == 0) || (round == 5))
 		bso = Mix_LoadMUS("../music/stage1.ogg");
-	if (round == 1)
+	if ((round == 1) || (round == 6))
 		bso = Mix_LoadMUS("../music/stage2.ogg");
-	if (round == 2)
+	if ((round == 2) || (round == 7))
 		bso = Mix_LoadMUS("../music/stage3.ogg");
-	if (round == 3)
+	if ((round == 3) || (round == 8))
 		bso = Mix_LoadMUS("../music/stage4.ogg");
-	if (round == 4)
+	if ((round == 4) || (round == 9))
 		bso = Mix_LoadMUS("../music/stage5.ogg");
 
 	Mix_PlayMusic(bso, -1);
