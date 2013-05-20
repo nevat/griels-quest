@@ -87,6 +87,9 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 		.killed = 0,
 	};
 
+	/* Disable push keys until game start */
+	SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
+
 	SDL_Rect srcfonts = {0,128,8,8};
 	SDL_Rect desfonts = {136,96,8,8};
 	SDL_Rect srcblocks = {0,0,16,16};
@@ -127,6 +130,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 								waittime = 0;
 								loadoninit = 1;
 								fademode = 0;
+								SDL_EventState(SDL_KEYDOWN, SDL_ENABLE); /* Enable pushes keys */
 							}
 							break;
 			case 1: /* If stage starts now, load music */
@@ -157,7 +161,6 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							show_hero(&griel, counter, window, blocks, &round, &step, &waittime);
 							/* Key pressed */
 							controls(&griel);
-
 							break;
 			case 2: /* gameover screen for 10 seconds */
 							if (waittime < 600) {
@@ -713,37 +716,37 @@ void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surfac
 
 void controls (struct hero *griel) {
 
-	SDL_Event keystroke;
+	SDL_Event keystroke2;
 
-	while (SDL_PollEvent(&keystroke)) {
-		if (keystroke.type == SDL_QUIT)
+	while (SDL_PollEvent(&keystroke2)) {
+		if (keystroke2.type == SDL_QUIT)
 			exit(0);
-		if (keystroke.type == SDL_KEYDOWN) {
-			if (keystroke.key.keysym.sym == SDLK_ESCAPE) {
+		if (keystroke2.type == SDL_KEYDOWN) {
+			if (keystroke2.key.keysym.sym == SDLK_ESCAPE) {
 				if ((griel->locked == 0) && (griel->deathanimation == 0)) {
 					griel->locked = 1;
 					griel->direction = 6;
 				}
 			}
-			if (keystroke.key.keysym.sym == SDLK_UP) {
+			if (keystroke2.key.keysym.sym == SDLK_UP) {
 				if ((griel->locked == 0) && (griel->positiony > 0)) {
 					griel->locked = 1;
 					griel->direction = 1;
 				}
 			}
-			if (keystroke.key.keysym.sym == SDLK_DOWN) {
+			if (keystroke2.key.keysym.sym == SDLK_DOWN) {
 				if ((griel->locked == 0) && (griel->positiony < 10)) {
 					griel->locked = 1;
 					griel->direction = 2;
 				}
 			}
-			if (keystroke.key.keysym.sym == SDLK_LEFT) {
+			if (keystroke2.key.keysym.sym == SDLK_LEFT) {
 				if ((griel->locked == 0) && (griel->positionx > 0)) {
 					griel->locked = 1;
 					griel->direction = 3;
 				}
 			}
-			if (keystroke.key.keysym.sym == SDLK_RIGHT) {
+			if (keystroke2.key.keysym.sym == SDLK_RIGHT) {
 				if ((griel->locked == 0) && (griel->positionx < 15)) {
 					griel->locked = 1;
 					griel->direction = 4;
