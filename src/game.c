@@ -13,9 +13,9 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_Surface *window = NULL;
 	SDL_Surface *doble = NULL;
 	SDL_Surface *gameoverscreen = NULL;
-	SDL_Surface *comingsoon = NULL;
+	SDL_Surface *passscreen01 = NULL;
 
-	Mix_Music *bso;
+	Mix_Music *bsogame;
 	Mix_Music *gameover;
 	Mix_Chunk *stageclear;
 
@@ -56,8 +56,8 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	temp = IMG_Load("../png/gameover.png");
 	gameoverscreen = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/soon.png");
-	comingsoon = SDL_DisplayFormat(temp);
+	temp = IMG_Load("../png/passw1.png");
+	passscreen01 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
 	stageclear = Mix_LoadWAV("../music/stageclear.ogg");
 	gameover = Mix_LoadMUS("../music/gameover.ogg");
@@ -87,9 +87,6 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 		.killed = 0,
 	};
 
-	/* Disable push keys until game start */
-	SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
-
 	SDL_Rect srcfonts = {0,128,8,8};
 	SDL_Rect desfonts = {136,96,8,8};
 	SDL_Rect srcblocks = {0,0,16,16};
@@ -117,6 +114,9 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							/* Apply transparency */
 							SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
 							SDL_BlitSurface(blackbox,NULL,window,NULL);
+							if ((fademode == 0) && (fadecounter == 255))
+								/* Disable push keys until game start */
+								SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
 							if ((fademode == 0) && (fadecounter > 0))
 								fadecounter -= 3;
 							if ((fademode == 1) && (fadecounter < 255))
@@ -135,7 +135,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							break;
 			case 1: /* If stage starts now, load music */
 							if (loadoninit == 1) {
-								load_music(bso,round);
+								load_music(bsogame,round);
 								loadoninit = 0;
 								set_hero_init (&griel, round);
 							}
@@ -174,21 +174,26 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 								Mix_HaltMusic();
 							}
 							break;
-			case 3: /* show "comming soon" screen and return */
-							if (waittime < 900) {
+			case 3: /* show password info, with fade in & out */
+							if (round == 4)
+								SDL_BlitSurface(passscreen01,NULL,window,NULL);
+							SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
+							SDL_BlitSurface(blackbox,NULL,window,NULL);
+							if ((fademode == 0) && (fadecounter == 255))
+								SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
+							if ((fademode == 0) && (fadecounter > 0))
+								fadecounter -= 3;
+							if ((fademode == 1) && (fadecounter < 255))
+								fadecounter += 3;
+							if ((fademode == 0) && (fadecounter == 0))
 								waittime ++;
-								if (waittime == 1)
-									Mix_PlayMusic(gameover, 0);
-								if (waittime < 300)
-									srctext.h = 57;
-								else
-									srctext.h = 224;
-								SDL_BlitSurface(blackbox,NULL,window,NULL);
-								SDL_BlitSurface(comingsoon,&srctext,window,NULL);
-							}
-							else {
-								*state = 0;
-								Mix_HaltMusic();
+							if (((fademode == 0) && (fadecounter == 0)) && (waittime == 600))
+								fademode = 1;
+							if (waittime > 599) {
+								round ++;
+								waittime = 0;
+								step = 0;
+								fademode = 0;
 							}
 							break;
 		}
@@ -210,146 +215,10 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(blackbox);
 	SDL_FreeSurface(window);
 	SDL_FreeSurface(gameoverscreen);
-	/* BUG: if bso music is cleared, segmentation fault occurs, i don't know why */
-	/* Mix_FreeMusic(bso); */
+	SDL_FreeSurface(passscreen01);
+	Mix_FreeMusic(bsogame);
 	Mix_FreeMusic(gameover);
 	Mix_FreeChunk(stageclear);
-
-}
-
-void loaddata (int map[][11][16]) {
-
-	uint i = 0;
-	uint j = 0;
-	uint k = 0;
-	FILE *datafile = fopen("../data/rounds.txt", "r");
-	char line[49];
-	char temp[2];;
-
-	/* Load data an put in array */
-	fgets (line, 49, datafile);
-	for (i=0;i<5;i++) {
-		for (j=0;j<11;j++) {
-			for (k=0;k<16;k+=1) {
-				temp[0] = line[k*3];
-				temp[1] = line[k*3 + 1];
-				sscanf (temp, "%d", &map[i][j][k]);
-			}
-			fgets (line, 49, datafile);
-		}
-		fgets (line, 49, datafile);
-	}
-
-	fclose(datafile);
-
-}
-
-void show_hud (struct hero griel, SDL_Surface *fonts, SDL_Surface *window, SDL_Surface *blocks, int round) {
-
-	SDL_Rect srcfonts = {0,128,8,8};
-	SDL_Rect desfonts = {136,96,8,8};
-	SDL_Rect srcblocks = {0,0,16,16};
-	SDL_Rect desblocks = {0,0,16,16};
-
-	int points = 0;
-	int i = 0;
-
-	/* Show score */
-	/* Can be optimized ? */
-	points = griel.score;
-	desfonts.x = 16;
-	desfonts.y = 8;
-	if (points > 999999) {
-		srcfonts.x = (points / 1000000) * 8;
-		points -= ((srcfonts.x / 8) * 1000000);
-	}
-	else
-		srcfonts.x = 0;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	desfonts.x = 24;
-	if (points > 99999) {
-		srcfonts.x = (points / 100000) * 8;
-		points -= ((srcfonts.x / 8) * 100000);
-	}
-	else
-		srcfonts.x = 0;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	desfonts.x = 32;
-	if (points > 9999) {
-		srcfonts.x = (points / 10000) * 8;
-		points -= ((srcfonts.x / 8) * 10000);
-	}
-	else
-		srcfonts.x = 0;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	desfonts.x = 40;
-	if (points > 999) {
-		srcfonts.x = (points / 1000) * 8;
-		points -= ((srcfonts.x / 8) * 1000);
-	}
-	else
-		srcfonts.x = 0;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	desfonts.x = 48;
-	if (points > 99) {
-		srcfonts.x = (points / 100) * 8;
-		points -= ((srcfonts.x / 8) * 100);
-	}
-	else
-		srcfonts.x = 0;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	desfonts.x = 56;
-	if (points > 9) {
-		srcfonts.x = (points / 10) * 8;
-		points -= ((srcfonts.x / 8) * 10);
-	}
-	else
-		srcfonts.x = 0;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	desfonts.x = 64;
-	srcfonts.x = (points) * 8;
-	SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-
-	/* Show lifes */
-	for (i=1;i<4;i++) {
-		if (i < griel.lifes) {
-			srcblocks.x = 96;
-			srcblocks.y = 32;
-			desblocks.y = 0;
-			desblocks.x = 112 + (16 * i);
-			SDL_BlitSurface(blocks,&srcblocks,window,&desblocks);
-		}
-	}
-
-	/* Show object */
-	if (griel.object > 0) {
-		desblocks.x = 96;
-		desblocks.y = 0;
-		srcblocks.y = 32;
-		srcblocks.x = 0 + (16 * griel.object) - 16;
-		SDL_BlitSurface(blocks,&srcblocks,window,&desblocks);
-	}
-
-	/* Show round number */
-	if ((round + 1) < 10) {
-		desfonts.x = 208;
-		desfonts.y = 8;
-		srcfonts.x = 0;
-		SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-		desfonts.x = 216;
-		srcfonts.x = (round + 1) * 8;
-		SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	}
-	else {
-		desfonts.x = 208;
-		desfonts.y = 8;
-		srcfonts.x = ((round + 1) / 10) * 8;
-		SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-		desfonts.x = 216;
-		desfonts.y = 8;
-		srcfonts.x = ((((round + 1) / 10) * 10) - (round + 1)) * 8;
-		SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
-	}
 
 }
 
@@ -570,155 +439,11 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
 
 }
 
-void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surface *blocks, int *round, int *step, uint *waittime) {
-
-	SDL_Rect srchero = {96,32,16,16};
-	SDL_Rect desthero = {0,0,16,16};
-
-	/* Set X & Y coord. for hero tile */
-	switch (griel->direction) {
-		case 1: srchero.x = 128;
-						srchero.y = 32;
-						break;
-		case 2: srchero.x = 96;
-						srchero.y = 32;
-						break;
-		case 3: srchero.x = 0;
-						srchero.y = 48;
-						break;
-		case 4: srchero.x = 32;
-						srchero.y = 48;
-						break;
-		case 5: srchero.x = 96;
-						srchero.y = 48;
-						break;
-	}
-
-	if (((counter > 14) && (counter < 30)) || ((counter > 44) && (counter < 60))) /* Animation */
-		srchero.x = srchero.x + 16;
-
-	/* Hero movement */
-	if (griel->locked == 1) {
-		if (griel->direction == 2) {
-			if (griel->movement < 16) { /* down */
-				griel->y ++;
-				griel->movement ++;
-			}
-			else {
-				griel->movement = 0;
-				griel->locked = 0;
-				griel->positiony ++;
-			}
-		}
-		if (griel->direction == 1) {
-			if (griel->movement < 16) { /* up */
-				griel->y --;
-				griel->movement ++;
-			}
-			else {
-				griel->movement = 0;
-				griel->locked = 0;
-				griel->positiony --;
-				/* griel->direction = 2; */
-			}
-		}
-		if (griel->direction == 3) {
-			if (griel->movement < 16) { /* left */
-				griel->x --;
-				griel->movement ++;
-			}
-			else {
-				griel->movement = 0;
-				griel->locked = 0;
-				griel->positionx --;
-				/* griel->direction = 2; */
-			}
-		}
-		if (griel->direction == 4) {
-			if (griel->movement < 16) { /* right */
-				griel->x ++;
-				griel->movement ++;
-			}
-			else {
-				griel->movement = 0;
-				griel->locked = 0;
-				griel->positionx ++;
-				/* griel->direction = 2; */
-			}
-		}
-		if (griel->direction == 5) { /* Exiting stage */
-			if (griel->endanimation < 80) {
-				griel->endanimation += 1;
-				if (griel->endanimation == 1)
-					Mix_HaltMusic();
-				srchero.x += (griel->endanimation / 20) * 16;
-			}
-			else { /* change round */
-				srchero.x = 80;
-				srchero.y = 32;
-				if (*waittime < 220)
-					*waittime += 1;
-				else {
-					if (*round < 4) {
-						*round += 1;
-						*step = 0;
-						*waittime = 0;
-					}
-					else {
-						*step = 3;
-						*waittime = 0;
-					}
-				}
-			}
-		}
-		if (griel->direction == 6) { /* Hero dead animation */
-			if (griel->deathturns < 7) {
-				switch (griel->deathanimation) {
-					case 0: srchero.x = 96;
-									srchero.y = 32;
-									break;
-					case 1: srchero.x = 0;
-									srchero.y = 48;
-									break;
-					case 2: srchero.x = 128;
-									srchero.y = 32;
-									break;
-					case 3: srchero.x = 32;
-									srchero.y = 48;
-									break;
-				}
-				if (griel->deathanimation < 4) {
-					if (counter % 5 == 0)
-						griel->deathanimation ++;
-				}
-				else {
-					griel->deathturns ++;
-					griel->deathanimation = 0;
-				}
-			}
-			else {
-				if (griel->lifes > 1) { /* -1 life, and start round again */
-					griel->lifes --;
-					*step = 0;
-					griel->killed = 1;
-				}
-				else /* Call "Game Over" screen */
-					*step = 2;
-				Mix_HaltMusic();
-			}
-		}
-	}
-	desthero.x = griel->x;
-	desthero.y = griel->y;
-	SDL_BlitSurface(blocks,&srchero,window,&desthero);
-
-}
-
 void controls (struct hero *griel) {
 
 	SDL_Event keystroke;
 
-	while (SDL_PollEvent(&keystroke2)) {
+	while (SDL_PollEvent(&keystroke)) {
 		if (keystroke.type == SDL_QUIT)
 			exit(0);
 		if (keystroke.type == SDL_KEYDOWN) {
@@ -753,72 +478,6 @@ void controls (struct hero *griel) {
 				}
 			}
 		}
-	}
-
-}
-
-void load_music(Mix_Music *bso, int round) {
-
-	if ((round == 0) || (round == 5))
-		bso = Mix_LoadMUS("../music/stage1.ogg");
-	if ((round == 1) || (round == 6))
-		bso = Mix_LoadMUS("../music/stage2.ogg");
-	if ((round == 2) || (round == 7))
-		bso = Mix_LoadMUS("../music/stage3.ogg");
-	if ((round == 3) || (round == 8))
-		bso = Mix_LoadMUS("../music/stage4.ogg");
-	if ((round == 4) || (round == 9))
-		bso = Mix_LoadMUS("../music/stage5.ogg");
-
-	Mix_PlayMusic(bso, -1);
-
-}
-
-void set_hero_init (struct hero *griel, int round) {
-
-	switch (round) {
-		case 0: griel->x = 112;
-						griel->y = 48;
-						griel->positionx = 7;
-						griel->positiony = 1;
-						griel->endanimation = 0;
-						break;
-		case 1: griel->x = 112;
-						griel->y = 48;
-						griel->positionx = 7;
-						griel->positiony = 1;
-						break;
-		case 2: griel->x = 112;
-						griel->y = 32;
-						griel->positionx = 7;
-						griel->positiony = 0;
-						break;
-		case 3: griel->x = 240;
-						griel->y = 32;
-						griel->positionx = 15;
-						griel->positiony = 0;
-						break;
-		case 4: griel->x = 112;
-						griel->y = 32;
-						griel->positionx = 7;
-						griel->positiony = 0;
-						break;
-	}
-	griel->direction = 2;
-	griel->locked = 0;
-	griel->endanimation = 0;
-	griel->deathanimation = 0;
-	griel->deathturns = 0;
-	griel->object = 0;
-
-}
-
-void extralife (struct hero *griel, uint *uplife) {
-
-	if (griel->score > (5000 + (*uplife * 5000))) {
-		*uplife += 1;
-		if (griel->lifes < 4)
-			griel->lifes += 1;
 	}
 
 }
