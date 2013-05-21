@@ -13,7 +13,7 @@ void loaddata (int map[][11][16]) {
 
 	/* Load data an put in array */
 	fgets (line, 49, datafile);
-	for (i=0;i<5;i++) {
+	for (i=0;i<7;i++) {
 		for (j=0;j<11;j++) {
 			for (k=0;k<16;k+=1) {
 				temp[0] = line[k*3];

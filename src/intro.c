@@ -213,7 +213,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 									}
 									if ((keystroke.key.keysym.sym == SDLK_SPACE) || (keystroke.key.keysym.sym == SDLK_RETURN)) {
 										*state = 1;
-										*level = 1;
+										*level = 6;
 									}
 								}
 							}
