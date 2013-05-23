@@ -65,6 +65,8 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	uint animcounter = 0;
 	uint posarrow = 0;
 	uint selectorpos = 1;
+	uint passint[8] = {0,0,0,0,0,0,0,0};
+	uint n = 0;
 
 	/* Loop */
 	while (*state == 0) {
@@ -278,7 +280,17 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 											selectorpos -= 32;
 										}
 									}
+									if (keystroke.key.keysym.sym == SDLK_SPACE) {
+										if (selectorpos < 38) {
+											passint[n] = selectorpos;
+											n ++;
+										}
+									}
 								}
+							}
+							/* Showing characters */
+							for (i=0;i<8;i++) {
+
 							}
 							break;
 		}
