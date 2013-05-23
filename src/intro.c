@@ -14,6 +14,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_Surface *startinfo = NULL;
 	SDL_Surface *menu = NULL;
 	SDL_Surface *arrow = NULL;
+	SDL_Surface *passwords = NULL;
 
 	SDL_Event keystroke;
 
@@ -42,6 +43,9 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	temp = IMG_Load("../png/fonts.png");
 	arrow = SDL_DisplayFormatAlpha(temp);
 	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/password.png");
+	passwords = SDL_DisplayFormatAlpha(temp);
+	SDL_FreeSurface(temp);
 
 	SDL_Rect srcscreen = {0,0,256,224};
 	SDL_Rect destscreen = {0,0,256,224};
@@ -51,6 +55,8 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_Rect destblocks = {0,0,16,16};
 	SDL_Rect srcarrow = {40,40,8,8};
 	SDL_Rect desarrow = {80,88,8,8};
+	SDL_Rect srcselector = {0,224,14,14};
+	SDL_Rect destselector = {61,101,14,14};
 
 	uint step = 0;
 	int framerate = 0;
@@ -58,6 +64,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	uint fadecounter = 255;
 	uint animcounter = 0;
 	uint posarrow = 0;
+	uint selectorpos = 1;
 
 	/* Loop */
 	while (*state == 0) {
@@ -212,8 +219,64 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 											posarrow = 0;
 									}
 									if ((keystroke.key.keysym.sym == SDLK_SPACE) || (keystroke.key.keysym.sym == SDLK_RETURN)) {
-										*state = 1;
-										*level = 6;
+										if (posarrow == 0) {
+											*state = 1;
+											*level = 1;
+										}
+										if (posarrow == 1)
+											step = 4;
+									}
+								}
+							}
+							break;
+			case 4: /* show password selection */
+							SDL_BlitSurface(passwords,&srcscreen,window,&destscreen);
+							SDL_BlitSurface(passwords,&srcselector,window,&destselector);
+							while (SDL_PollEvent(&keystroke)) {
+								if (keystroke.type == SDL_QUIT)
+									exit(0);
+								if (keystroke.type == SDL_KEYDOWN) {
+									if (keystroke.key.keysym.sym == SDLK_ESCAPE)
+										exit(0);
+									if (keystroke.key.keysym.sym == SDLK_RIGHT) {
+										if (destselector.x < 173) {
+											destselector.x += 16;
+											selectorpos ++;
+										}
+										else {
+											destselector.x -= 112;
+											selectorpos -= 7;
+										}
+									}
+									if (keystroke.key.keysym.sym == SDLK_LEFT) {
+										if (destselector.x > 61) {
+											destselector.x -= 16;
+											selectorpos --;
+										}
+										else {
+											destselector.x += 112;
+											selectorpos += 7;
+										}
+									}
+									if (keystroke.key.keysym.sym == SDLK_UP) {
+										if (destselector.y > 101) {
+											destselector.y -= 16;
+											selectorpos -= 8;
+										}
+										else {
+											destselector.y += 64;
+											selectorpos += 32;
+										}
+									}
+									if (keystroke.key.keysym.sym == SDLK_DOWN) {
+										if (destselector.y < 165) {
+											destselector.y += 16;
+											selectorpos += 8;
+										}
+										else {
+											destselector.y -= 64;
+											selectorpos -= 32;
+										}
 									}
 								}
 							}
@@ -234,5 +297,6 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(blocks);
 	SDL_FreeSurface(startscreen);
 	SDL_FreeSurface(startinfo);
+	SDL_FreeSurface(passwords);
 
 }
