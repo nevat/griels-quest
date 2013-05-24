@@ -75,6 +75,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	uint n = 0;
 	uint validatepass = 0;
 	uint i = 0;
+	uint result = 0;
 
 	/* Loop */
 	while (*state == 0) {
@@ -338,7 +339,23 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 										srcletters.x = (passint[i] - 27) * 16;
 									}
 									destletters.x = 64 + (i * 16);
+									destletters.y = 64;
 									SDL_BlitSurface(fonts,&srcletters,window,&destletters);
+								}
+							}
+							/* Showing character position */
+							srcletters.x = 96;
+							srcletters.y = 112;
+							destletters.x = 64 + (n * 16);
+							destletters.y = 80;
+							SDL_BlitSurface(fonts,&srcletters,window,&destletters);
+							/* Checking if password is correct */
+							if (validatepass == 1) {
+								result = passwvalidate(passint);
+								validatepass = 0;
+								if (result > 0) {
+									*level = result;
+									*state = 2;
 								}
 							}
 							break;
@@ -360,5 +377,16 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(startinfo);
 	SDL_FreeSurface(passwords);
 	SDL_FreeSurface(fonts);
+
+}
+
+int passwvalidate (uint passint[]) {
+
+	int n = 0;
+
+	if ((passint[0] == 7) && (passint[1] == 5) && (passint[2] == 14) && (passint[3] == 5) && (passint[4] == 19) && (passint[5] == 9) && (passint[6] == 19) && (passint[7] == 0))
+		n = 5;
+
+	return n;
 
 }

@@ -7,3 +7,4 @@
 # include <SDL_rotozoom.h>
 
 void game_intro (SDL_Surface *screen, uint *state, uint *level);
+int passwvalidate (uint passint[]);
