@@ -19,7 +19,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	Mix_Music *gameover;
 	Mix_Chunk *stageclear;
 
-	int map[7][11][16];
+	int map[10][11][16];
 
 	uint step = 0;
 	uint waittime = 0;
@@ -242,7 +242,7 @@ void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_
 					map[round][i][j] = 26;
 				}
 				if (map[round][i][j] == 35) { /* Pow tile 2 */
-					if (*animationtime < 20)
+					if (*animationtime < 15)
 						*animationtime += 1;
 					else {
 						map[round][i][j] = 0;
@@ -250,7 +250,7 @@ void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_
 					}
 				}
 				if (map[round][i][j] == 36) { /* Pow tile 1 */
-					if (*animationtime < 20)
+					if (*animationtime < 15)
 						*animationtime += 1;
 					else {
 						map[round][i][j] = 35;
