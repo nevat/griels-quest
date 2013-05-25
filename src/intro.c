@@ -385,7 +385,7 @@ int passwvalidate (uint passint[]) {
 	int n = 0;
 
 	if ((passint[0] == 7) && (passint[1] == 5) && (passint[2] == 14) && (passint[3] == 5) && (passint[4] == 19) && (passint[5] == 9) && (passint[6] == 19) && (passint[7] == 0))
-		n = 5;
+		n = 6;
 
 	return n;
 
