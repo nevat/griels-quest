@@ -52,7 +52,7 @@ void set_hero_init (struct hero *griel, int round) {
 						griel->positiony = 0;
 						break;
 		case 9: griel->x = 0;
-						griel->y = 208;
+						griel->y = 192;
 						griel->positionx = 0;
 						griel->positiony = 11;
 						break;

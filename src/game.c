@@ -111,6 +111,13 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 								desfonts.x = 152;
 								SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
 							}
+							else {
+								srcfonts.x = (*level / 10) * 8;
+								SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
+								srcfonts.x = (*level - ((*level / 10) * 10)) * 8;
+								desfonts.x = 152;
+								SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
+							}
 							/* Apply transparency */
 							SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
 							SDL_BlitSurface(blackbox,NULL,window,NULL);
