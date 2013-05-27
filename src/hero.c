@@ -167,7 +167,7 @@ void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surfac
 				if (*waittime < 220)
 					*waittime += 1;
 				else {
-					if (*round != 4) {
+					if ((*round != 4) && (*round !=10)) {
 						*round += 1;
 						*step = 0;
 						*waittime = 0;
