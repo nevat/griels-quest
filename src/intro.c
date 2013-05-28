@@ -385,7 +385,10 @@ int passwvalidate (uint passint[]) {
 	int n = 0;
 
 	if ((passint[0] == 7) && (passint[1] == 5) && (passint[2] == 14) && (passint[3] == 5) && (passint[4] == 19) && (passint[5] == 9) && (passint[6] == 19) && (passint[7] == 0))
-		n = 10;
+		n = 6;
+
+	if ((passint[0] == 16) && (passint[1] == 19) && (passint[2] == 1) && (passint[3] == 12) && (passint[4] == 13) && (passint[5] == 19) && (passint[6] == 0) && (passint[7] == 0))
+		n = 11;
 
 	return n;
 

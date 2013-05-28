@@ -56,6 +56,21 @@ void set_hero_init (struct hero *griel, int round) {
 						griel->positionx = 0;
 						griel->positiony = 11;
 						break;
+		case 10: griel->x = 0;
+						 griel->y = 192;
+						 griel->positionx = 0;
+						 griel->positiony = 11;
+						 break;
+		case 11: griel->x = 96;
+						 griel->y = 192;
+						 griel->positionx = 6;
+						 griel->positiony = 11;
+						 break;
+		case 12: griel->x = 224;
+						 griel->y = 112;
+						 griel->positionx = 14;
+						 griel->positiony = 5;
+						 break;
 	}
 	griel->direction = 2;
 	griel->locked = 0;
