@@ -390,6 +390,30 @@ int passwvalidate (uint passint[]) {
 	if ((passint[0] == 16) && (passint[1] == 19) && (passint[2] == 1) && (passint[3] == 12) && (passint[4] == 13) && (passint[5] == 19) && (passint[6] == 0) && (passint[7] == 0))
 		n = 11;
 
+	if ((passint[0] == 18) && (passint[1] == 15) && (passint[2] == 13) && (passint[3] == 1) && (passint[4] == 14) && (passint[5] == 19) && (passint[6] == 0) && (passint[7] == 0))
+		n = 16;
+
+	if ((passint[0] == 10) && (passint[1] == 1) && (passint[2] == 13) && (passint[3] == 5) && (passint[4] == 19) && (passint[5] == 0) && (passint[6] == 0) && (passint[7] == 0))
+		n = 21;
+
+	if ((passint[0] == 5) && (passint[1] == 3) && (passint[2] == 3) && (passint[3] == 12) && (passint[4] == 5) && (passint[5] == 9) && (passint[6] == 1) && (passint[7] == 0))
+		n = 26;
+
+	if ((passint[0] == 8) && (passint[1] == 5) && (passint[2] == 18) && (passint[3] == 5) && (passint[4] == 23) && (passint[5] == 19) && (passint[6] == 0) && (passint[7] == 0))
+		n = 31;
+
+	if ((passint[0] == 10) && (passint[1] == 15) && (passint[2] == 8) && (passint[3] == 14) && (passint[4] == 0) && (passint[5] == 0) && (passint[6] == 0) && (passint[7] == 0))
+		n = 37;
+
+	if ((passint[0] == 16) && (passint[1] == 18) && (passint[2] == 15) && (passint[3] == 22) && (passint[4] == 5) && (passint[5] == 18) && (passint[6] == 2) && (passint[7] == 19))
+		n = 43;
+
+	if ((passint[0] == 9) && (passint[1] == 19) && (passint[2] == 1) && (passint[3] == 9) && (passint[4] == 1) && (passint[5] == 8) && (passint[6] == 0) && (passint[7] == 0))
+		n = 49;
+
+	if ((passint[0] == 13) && (passint[1] == 1) && (passint[2] == 20) && (passint[3] == 20) && (passint[4] == 8) && (passint[5] == 5) && (passint[6] == 23) && (passint[7] == 0))
+		n = 55;
+
 	return n;
 
 }

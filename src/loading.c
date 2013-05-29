@@ -13,7 +13,7 @@ void loaddata (int map[][11][16]) {
 
 	/* Load data an put in array */
 	fgets (line, 49, datafile);
-	for (i=0;i<13;i++) {
+	for (i=0;i<20;i++) {
 		for (j=0;j<11;j++) {
 			for (k=0;k<16;k+=1) {
 				temp[0] = line[k*3];
@@ -31,15 +31,15 @@ void loaddata (int map[][11][16]) {
 
 void load_music(Mix_Music *bsogame, int round) {
 
-	if ((round == 0) || (round == 5) || (round == 10))
+	if ((round == 0) || (round == 5) || (round == 10) || (round == 15))
 		bsogame = Mix_LoadMUS("../music/stage1.ogg");
-	if ((round == 1) || (round == 6) || (round == 11))
+	if ((round == 1) || (round == 6) || (round == 11) || (round == 16))
 		bsogame = Mix_LoadMUS("../music/stage2.ogg");
-	if ((round == 2) || (round == 7) || (round == 12))
+	if ((round == 2) || (round == 7) || (round == 12) || (round == 17))
 		bsogame = Mix_LoadMUS("../music/stage3.ogg");
-	if ((round == 3) || (round == 8) || (round == 13))
+	if ((round == 3) || (round == 8) || (round == 13) || (round == 18))
 		bsogame = Mix_LoadMUS("../music/stage4.ogg");
-	if ((round == 4) || (round == 9) || (round == 14))
+	if ((round == 4) || (round == 9) || (round == 14) || (round == 19))
 		bsogame = Mix_LoadMUS("../music/stage5.ogg");
 
 	Mix_PlayMusic(bsogame, -1);
