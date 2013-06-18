@@ -15,6 +15,14 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_Surface *gameoverscreen = NULL;
 	SDL_Surface *passscreen01 = NULL;
 	SDL_Surface *passscreen02 = NULL;
+	SDL_Surface *passscreen03 = NULL;
+	SDL_Surface *passscreen04 = NULL;
+	SDL_Surface *passscreen05 = NULL;
+	SDL_Surface *passscreen06 = NULL;
+	SDL_Surface *passscreen07 = NULL;
+	SDL_Surface *passscreen08 = NULL;
+	SDL_Surface *passscreen09 = NULL;
+	SDL_Surface *passscreen10 = NULL;
 
 	Mix_Music *bsogame;
 	Mix_Music *gameover;
@@ -62,6 +70,30 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(temp);
 	temp = IMG_Load("../png/passw2.png");
 	passscreen02 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw3.png");
+	passscreen03 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw4.png");
+	passscreen04 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw5.png");
+	passscreen05 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw6.png");
+	passscreen06 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw7.png");
+	passscreen07 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw8.png");
+	passscreen08 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw9.png");
+	passscreen09 = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	temp = IMG_Load("../png/passw10.png");
+	passscreen10 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
 	stageclear = Mix_LoadWAV("../music/stageclear.ogg");
 	gameover = Mix_LoadMUS("../music/gameover.ogg");
@@ -188,8 +220,24 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 			case 3: /* show password info, with fade in & out */
 							if (round == 4)
 								SDL_BlitSurface(passscreen01,NULL,window,NULL);
-							if (round == 10)
+							if (round == 9)
 								SDL_BlitSurface(passscreen02,NULL,window,NULL);
+							if (round == 14)
+								SDL_BlitSurface(passscreen03,NULL,window,NULL);
+							if (round == 19)
+								SDL_BlitSurface(passscreen04,NULL,window,NULL);
+							if (round == 24)
+								SDL_BlitSurface(passscreen05,NULL,window,NULL);
+							if (round == 29)
+								SDL_BlitSurface(passscreen06,NULL,window,NULL);
+							if (round == 35)
+								SDL_BlitSurface(passscreen07,NULL,window,NULL);
+							if (round == 41)
+								SDL_BlitSurface(passscreen08,NULL,window,NULL);
+							if (round == 47)
+								SDL_BlitSurface(passscreen09,NULL,window,NULL);
+							if (round == 53)
+								SDL_BlitSurface(passscreen10,NULL,window,NULL);
 							SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
 							SDL_BlitSurface(blackbox,NULL,window,NULL);
 							if ((fademode == 0) && (fadecounter == 255))
@@ -230,6 +278,14 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(gameoverscreen);
 	SDL_FreeSurface(passscreen01);
 	SDL_FreeSurface(passscreen02);
+	SDL_FreeSurface(passscreen03);
+	SDL_FreeSurface(passscreen04);
+	SDL_FreeSurface(passscreen05);
+	SDL_FreeSurface(passscreen06);
+	SDL_FreeSurface(passscreen07);
+	SDL_FreeSurface(passscreen08);
+	SDL_FreeSurface(passscreen09);
+	SDL_FreeSurface(passscreen10);
 	Mix_FreeMusic(bsogame);
 	Mix_FreeMusic(gameover);
 	Mix_FreeChunk(stageclear);
