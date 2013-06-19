@@ -17,5 +17,6 @@ struct hero {
 	uint deathanimation;
 	uint deathturns;
 	uint killed;
+	uint grial;
 
 };

@@ -121,6 +121,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 		.deathanimation = 0,
 		.deathturns = 0,
 		.killed = 0,
+		.grial = 0,
 	};
 
 	SDL_Rect srcfonts = {0,128,8,8};
@@ -286,7 +287,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(passscreen08);
 	SDL_FreeSurface(passscreen09);
 	SDL_FreeSurface(passscreen10);
-	Mix_FreeMusic(bsogame);
+	/* Mix_FreeMusic(bsogame); */
 	Mix_FreeMusic(gameover);
 	Mix_FreeChunk(stageclear);
 
@@ -376,7 +377,7 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
 							break;
 		}
 		/* Check if its a wall */
-		if (((target[0] > 0) && (target[0] < 4)) || ((target[0] > 7) && (target[0] < 11)) || ((target[0] > 34) && (target[0] < 37)) || (target[0] == 25) || (target[0] == 99)) {
+		if (((target[0] > 0) && (target[0] < 4)) || ((target[0] > 7) && (target[0] < 11)) || ((target[0] > 34) && (target[0] < 37)) || ((target[0] > 40) && (target[0] < 46)) || (target[0] == 25) || (target[0] == 99)) {
 			griel->locked = 0;
 			/* griel->direction = 2; */
 		}
@@ -454,6 +455,11 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
 		if (target[0] == 24) { /* Key */
 				griel->key = 1;
 				griel->score += 300; /* Add to score */
+				deleteobject = 1;
+		}
+		if (target[0] == 46) { /* Grial */
+				griel->grial = 1;
+				griel->score += 1000; /* Add to score */
 				deleteobject = 1;
 		}
 		/* Deleting objects */
