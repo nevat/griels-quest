@@ -105,7 +105,7 @@ void show_hud (struct hero griel, SDL_Surface *fonts, SDL_Surface *window, SDL_S
 		SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
 		desfonts.x = 216;
 		desfonts.y = 8;
-		srcfonts.x = ((((round + 1) / 10) * 10) - (round + 1)) * 8;
+		srcfonts.x = ((round + 1) - (((round + 1) / 10) * 10)) * 8;
 		SDL_BlitSurface(fonts,&srcfonts,window,&desfonts);
 	}
 

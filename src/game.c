@@ -28,7 +28,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	Mix_Music *gameover;
 	Mix_Chunk *stageclear;
 
-	int map[20][11][16];
+	int map[58][11][16];
 
 	uint step = 0;
 	uint waittime = 0;
