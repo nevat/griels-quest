@@ -202,7 +202,7 @@ void extralife (struct hero *griel, uint *uplife) {
 
 }
 
-void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surface *blocks, int *round, int *step, uint *waittime) {
+void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surface *blocks, int *round, int *step, uint *waittime, uint *soundblock, Mix_Chunk *giveup) {
 
 	SDL_Rect srchero = {96,32,16,16};
 	SDL_Rect desthero = {0,0,16,16};
@@ -306,6 +306,11 @@ void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surfac
 			}
 		}
 		if (griel->direction == 6) { /* Hero dead animation */
+			if (*soundblock == 0) { /* Giveup sound */
+				Mix_HaltMusic();
+				*soundblock = 1;
+				Mix_PlayChannel(0,giveup,0);
+			}
 			if (griel->deathturns < 7) {
 				switch (griel->deathanimation) {
 					case 0: srchero.x = 96;
@@ -335,6 +340,7 @@ void show_hero (struct hero *griel, int counter, SDL_Surface *window, SDL_Surfac
 					griel->lifes --;
 					*step = 0;
 					griel->killed = 1;
+					*soundblock = 0;
 				}
 				else /* Call "Game Over" screen */
 					*step = 2;

@@ -16,6 +16,10 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_Surface *arrow = NULL;
 	SDL_Surface *passwords = NULL;
 	SDL_Surface *fonts = NULL;
+	Mix_Chunk *start = NULL;
+	Mix_Chunk *poff = NULL;
+	Mix_Chunk *error = NULL;
+	Mix_Chunk *ding = NULL;
 
 	SDL_Event keystroke;
 
@@ -50,6 +54,10 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	temp = IMG_Load("../png/fonts.png");
 	fonts = SDL_DisplayFormatAlpha(temp);
 	SDL_FreeSurface(temp);
+	start = Mix_LoadWAV("../fx/fx_start.ogg");
+	poff = Mix_LoadWAV("../fx/fx_poff.ogg");
+	error = Mix_LoadWAV("../fx/fx_error.ogg");
+	ding = Mix_LoadWAV("../fx/fx_ding.ogg");
 
 	SDL_Rect srcscreen = {0,0,256,224};
 	SDL_Rect destscreen = {0,0,256,224};
@@ -121,8 +129,10 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 								if (keystroke.type == SDL_KEYDOWN) {
 									if (keystroke.key.keysym.sym == SDLK_ESCAPE)
 										exit(0);
-									if (keystroke.key.keysym.sym == SDLK_SPACE)
+									if (keystroke.key.keysym.sym == SDLK_SPACE) {
+										Mix_PlayChannel(-1,start,0);
 										step = 3;
+									}
 								}
 							}
 							if ((counter > 340) && (counter < 426))
@@ -236,6 +246,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 										}
 										if (posarrow == 1)
 											step = 4;
+										Mix_PlayChannel(-1,start,0);
 									}
 								}
 							}
@@ -296,6 +307,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 												n ++;
 											else
 												n = 1;
+											Mix_PlayChannel(-1,start,0);
 										}
 										if (selectorpos == 37) { /* Tilde */
 											passint[n] = 0;
@@ -303,6 +315,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 												n ++;
 											else
 												n = 1;
+											Mix_PlayChannel(-1,start,0);
 										}
 										if (selectorpos == 38) { /* Delete */
 											if (n > 0) {
@@ -313,6 +326,7 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 												n = 7;
 												passint[n] = 0;
 											}
+											Mix_PlayChannel(-1,poff,0);
 										}
 										if (selectorpos == 39) /* Ok key */
 											validatepass = 1;
@@ -355,8 +369,11 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 								validatepass = 0;
 								if (result > 0) {
 									*level = result;
+									Mix_PlayChannel(-1,ding,0);
 									*state = 2;
 								}
+								else
+									Mix_PlayChannel(-1,error,0);
 							}
 							break;
 		}
@@ -377,6 +394,10 @@ void game_intro (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(startinfo);
 	SDL_FreeSurface(passwords);
 	SDL_FreeSurface(fonts);
+	Mix_FreeChunk(start);
+	Mix_FreeChunk(poff);
+	Mix_FreeChunk(error);
+	Mix_FreeChunk(ding);
 
 }
 

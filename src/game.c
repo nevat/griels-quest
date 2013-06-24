@@ -27,6 +27,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	Mix_Music *bsogame;
 	Mix_Music *gameover;
 	Mix_Chunk *stageclear;
+	Mix_Chunk *giveup;
 
 	int map[58][11][16];
 
@@ -44,6 +45,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	uint pausa = 0;
 	uint loadoninit = 0;
 	uint uplife = 0;
+	uint soundblock = 0;
 
 	/* load files */
 	temp = IMG_Load("../png/round.png");
@@ -97,6 +99,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	SDL_FreeSurface(temp);
 	stageclear = Mix_LoadWAV("../music/stageclear.ogg");
 	gameover = Mix_LoadMUS("../music/gameover.ogg");
+	giveup = Mix_LoadWAV("../fx/fx_giveup.ogg");
 
 	/* load map data */
 	loaddata(map);
@@ -202,7 +205,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							/* check for obstacles */
 							check_obstacles (&griel, round, map);
 							/* Show hero */
-							show_hero(&griel, counter, window, blocks, &round, &step, &waittime);
+							show_hero(&griel, counter, window, blocks, &round, &step, &waittime, &soundblock, giveup);
 							/* Key pressed */
 							controls(&griel);
 							break;
@@ -290,6 +293,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	/* Mix_FreeMusic(bsogame); */
 	Mix_FreeMusic(gameover);
 	Mix_FreeChunk(stageclear);
+	Mix_FreeChunk(giveup);
 
 }
 
