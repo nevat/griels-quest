@@ -29,6 +29,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	Mix_Chunk *stageclear;
 	Mix_Chunk *giveup;
 	Mix_Chunk *key;
+	Mix_Chunk *kill;
 
 	int map[58][11][16];
 
@@ -102,6 +103,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	gameover = Mix_LoadMUS("../music/gameover.ogg");
 	giveup = Mix_LoadWAV("../fx/fx_giveup.ogg");
 	key = Mix_LoadWAV("../fx/fx_key.ogg");
+	kill = Mix_LoadWAV("../fx/fx_kill.ogg");
 
 	/* load map data */
 	loaddata(map);
@@ -205,7 +207,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							/* Show titles */
 							show_tiles (&griel, &animationtime, map, window, blocks, round, counter, key);
 							/* check for obstacles */
-							check_obstacles (&griel, round, map);
+							check_obstacles (&griel, round, map, kill);
 							/* Show hero */
 							show_hero(&griel, counter, window, blocks, &round, &step, &waittime, &soundblock, giveup);
 							/* Key pressed */
@@ -296,6 +298,8 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	Mix_FreeMusic(gameover);
 	Mix_FreeChunk(stageclear);
 	Mix_FreeChunk(giveup);
+	Mix_FreeChunk(key);
+	Mix_FreeChunk(kill);
 
 }
 
@@ -350,7 +354,7 @@ void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_
 
 }
 
-void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
+void check_obstacles (struct hero *griel, int round, int map[][11][16], Mix_Chunk *kill) {
 
 	int deleteobject = 0;
 	int target[2] = {0,0};
@@ -415,6 +419,7 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
 		/* Check if its a enemy */
 		if ((target[0] == 11) || (target[0] == 12)) { /* Slim */
 			if (griel->object == 1) {
+				Mix_PlayChannel(-1,kill,0);
 				deleteobject = 1;
 				griel->object = 0;
 				griel->score += 10;
@@ -427,6 +432,7 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
 		if ((target[0] == 13) || (target[0] == 14)) { /* Ghost */
 			if (griel->object == 2) {
 				deleteobject = 1;
+				Mix_PlayChannel(-1,kill,0);
 				griel->object = 0;
 				griel->score += 60;
 			}
@@ -438,6 +444,7 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16]) {
 		if ((target[0] == 15) || (target[0] == 16)) { /* Ogre */
 			if (griel->object == 3) {
 				deleteobject = 1;
+				Mix_PlayChannel(-1,kill,0);
 				griel->object = 0;
 				griel->score += 30;
 			}

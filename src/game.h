@@ -11,6 +11,6 @@
 
 void game (SDL_Surface *screen, uint *state, uint *level);
 void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_Surface *window, SDL_Surface *blocks, int round, int counter, Mix_Chunk *key);
-void check_obstacles (struct hero *griel, int round, int map[][11][16]);
+void check_obstacles (struct hero *griel, int round, int map[][11][16], Mix_Chunk *kill);
 void controls (struct hero *griel);
 
