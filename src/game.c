@@ -28,6 +28,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	Mix_Music *gameover;
 	Mix_Chunk *stageclear;
 	Mix_Chunk *giveup;
+	Mix_Chunk *key;
 
 	int map[58][11][16];
 
@@ -100,6 +101,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	stageclear = Mix_LoadWAV("../music/stageclear.ogg");
 	gameover = Mix_LoadMUS("../music/gameover.ogg");
 	giveup = Mix_LoadWAV("../fx/fx_giveup.ogg");
+	key = Mix_LoadWAV("../fx/fx_key.ogg");
 
 	/* load map data */
 	loaddata(map);
@@ -201,7 +203,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							/* Show hud */
 							show_hud (griel, fonts, window, blocks, round);
 							/* Show titles */
-							show_tiles (&griel, &animationtime, map, window, blocks, round, counter);
+							show_tiles (&griel, &animationtime, map, window, blocks, round, counter, key);
 							/* check for obstacles */
 							check_obstacles (&griel, round, map);
 							/* Show hero */
@@ -297,7 +299,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 
 }
 
-void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_Surface *window, SDL_Surface *blocks, int round, int counter) {
+void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_Surface *window, SDL_Surface *blocks, int round, int counter, Mix_Chunk *key) {
 
 	SDL_Rect srcblocks = {0,0,16,16};
 	SDL_Rect desblocks = {0,0,16,16};
@@ -313,6 +315,7 @@ void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_
 				if (((map[round][i][j] == 12) || (map[round][i][j] == 14) || (map[round][i][j] == 16)) && (counter < 30))
 					map[round][i][j] --;
 				if ((map[round][i][j] == 25) && (griel->key == 1)) { /* Got key, so open the door */
+					Mix_PlayChannel(-1,key,0);
 					griel->key = 0;
 					map[round][i][j] = 26;
 				}
