@@ -13,6 +13,7 @@ void history (SDL_Surface *screen, uint *state) {
 
 	SDL_Event keystroke;
 	Mix_Music *bso;
+	Mix_Chunk *lol;
 
 	int framerate = 0;
 	uint step = 0;
@@ -50,6 +51,7 @@ void history (SDL_Surface *screen, uint *state) {
 	texts = SDL_DisplayFormatAlpha(temp);
 	SDL_FreeSurface(temp);
 	bso = Mix_LoadMUS("../music/history.ogg");
+	lol = Mix_LoadWAV("../fx/fx_hahaha.ogg");
 
 	/* Loop */
 	while (*state == 1) {
@@ -92,15 +94,17 @@ void history (SDL_Surface *screen, uint *state) {
 							SDL_BlitSurface(blackbox,&srcblackbox,window,&desblackbox);
 							break;
 			case 1: /* show history 1 */
-							if ((playmusic == 0) && (waittime == 120)) {
+							if (waittime == 60) /* Demon LOLed */
+								Mix_PlayChannel(0,lol,0);
+							if ((playmusic == 0) && (waittime == 180)) {
 								playmusic = 1;
 								Mix_PlayMusic(bso,0);
 							}
 							SDL_BlitSurface(blackbox,NULL,window,NULL);
 							SDL_BlitSurface(pictures,&srcpicture,window,&despicture);
-							if (waittime < 120)
+							if (waittime < 180)
 								waittime ++;
-							if (waittime > 119) {
+							if (waittime > 179) {
 								if (srcsent1.w < 200)
 									srcsent1.w ++;
 								SDL_BlitSurface(texts,&srcsent1,window,&destsent1);
@@ -120,7 +124,7 @@ void history (SDL_Surface *screen, uint *state) {
 									SDL_BlitSurface(texts,&srcsent4,window,&destsent4);
 								}
 								if (srcsent4.w == 200) {
-									if (waittime < 240)
+									if (waittime < 300)
 										waittime ++;
 									else {
 										step = 2;
