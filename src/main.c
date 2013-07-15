@@ -15,13 +15,15 @@ void main() {
 	screen = SDL_SetVideoMode(512,448,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
 
 	/* Loading part of the game */
-	while (state < 3) {
+	while (state < 4) {
 		switch (state) {
 			case 0: game_intro (screen, &state, &level);
 							break;
 			case 1: history (screen, &state);
 							break;
 			case 2: game (screen, &state, &level);
+							break;
+			case 3: ending (screen,&state);
 							break;
 		}
 	}
