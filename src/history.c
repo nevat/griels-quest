@@ -38,20 +38,20 @@ void history (SDL_Surface *screen, uint *state) {
 	SDL_Rect destsent4 = {28,168,200,8};
 
 	/* Loading files */
-	temp = IMG_Load("../png/blackbox.png");
+	temp = IMG_Load("/usr/share/griels/png/blackbox.png");
 	blackbox = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/blackbox.png");
+	temp = IMG_Load("/usr/share/griels/png/blackbox.png");
 	window = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/howtoplay.png");
+	temp = IMG_Load("/usr/share/griels/png/howtoplay.png");
 	pictures = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/texts.png");
+	temp = IMG_Load("/usr/share/griels/png/texts.png");
 	texts = SDL_DisplayFormatAlpha(temp);
 	SDL_FreeSurface(temp);
-	bso = Mix_LoadMUS("../music/history.ogg");
-	lol = Mix_LoadWAV("../fx/fx_hahaha.ogg");
+	bso = Mix_LoadMUS("/usr/share/griels/music/history.ogg");
+	lol = Mix_LoadWAV("/usr/share/griels/fx/fx_hahaha.ogg");
 
 	/* Loop */
 	while (*state == 1) {

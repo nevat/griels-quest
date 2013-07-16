@@ -21,23 +21,23 @@ void ending (SDL_Surface *screen, uint *state) {
 	int framerate = 0;
 
 	/* Loading files */
-	temp = IMG_Load("../png/blackbox2.png");
+	temp = IMG_Load("/usr/share/griels/png/blackbox2.png");
 	blackbox = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/ending1.png");
+	temp = IMG_Load("/usr/share/griels/png/ending1.png");
 	ending1 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/ending2.png");
+	temp = IMG_Load("/usr/share/griels/png/ending2.png");
 	ending2 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/ending3.png");
+	temp = IMG_Load("/usr/share/griels/png/ending3.png");
 	ending3 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	temp = IMG_Load("../png/theend.png");
+	temp = IMG_Load("/usr/share/griels/png/theend.png");
 	ending4 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
-	argh = Mix_LoadWAV("../fx/fx_uaaah.ogg");
-	bso = Mix_LoadMUS("../music/ending.ogg");
+	argh = Mix_LoadWAV("/usr/share/griels/fx/fx_uaaah.ogg");
+	bso = Mix_LoadMUS("/usr/share/griels/music/ending.ogg");
 
 	SDL_Rect srcending = {0,0,512,448};
 	SDL_Rect destending = {0,0,512,448};
