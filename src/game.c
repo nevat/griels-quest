@@ -49,6 +49,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	uint uplife = 0;
 	uint soundblock = 0;
 	uint grieltouch = 0;
+	uint fullscreench = 0;
 
 	/* load files */
 	temp = IMG_Load("../png/round.png");
@@ -215,7 +216,11 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							/* Show hero */
 							show_hero(&griel, counter, window, blocks, &round, &step, &waittime, &soundblock, giveup);
 							/* Key pressed */
-							controls(&griel);
+							controls(&griel,&fullscreench);
+							if (fullscreench == 1) {
+								SDL_WM_ToggleFullScreen (screen);
+								fullscreench = 0;
+							}
 							break;
 			case 2: /* gameover screen for 10 seconds */
 							if (waittime < 600) {
@@ -534,7 +539,7 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16], Mix_Chun
 
 }
 
-void controls (struct hero *griel) {
+void controls (struct hero *griel, uint *fullscreench) {
 
 	SDL_Event keystroke;
 
@@ -572,6 +577,8 @@ void controls (struct hero *griel) {
 					griel->direction = 4;
 				}
 			}
+			if (keystroke.key.keysym.sym == SDLK_f)
+				*fullscreench = 1;
 		}
 	}
 
