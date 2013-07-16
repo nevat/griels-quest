@@ -1,0 +1,41 @@
+ABOUT THIS GAME
+
+"Griel's Quest for the Sangraal" is a game released for MSX2 systems in the year 1990 (only on Japan). In 2005 was ported to MSX1 systems by Karoshi Corp.
+
+This version is a port of MSX1 version of the game to the GNU/Linux systems. Featuring all the levels, objects and enemies. The program is written in C language 
+with the help of SDL libraries.
+
+The game is licensed under GNU GPL version 3, so anyone can download, see, change and redistributed the code.
+
+
+INSTALLATION FOR SOURCE
+
+To compile the program you need GCC compiler and SDL libraries. In Fedora systems you can install all of this packages with this command (as root):
+
+$ yum install gcc SDL-devel SDL_mixer-devel SDL_image-devel SDL_ttf-devel SDL_gfx-devel
+
+For Ubuntu/Debian users, run this:
+
+$ sudo apt-get install gcc libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-gfx1.2-dev
+
+Unpack the source code file:
+
+$ tar vxfz griel_quest_src.tar.gz
+
+Enter the directory created an run:
+
+$ make
+As root, install the game with:
+
+$ make install
+
+(Ubuntu users run: $ sudo make install)
+
+A icon will appear in your application menu, in game section. Alternatively you can run the game with the order "abbaye".
+
+
+UNINSTALLATION FROM SOURCE
+
+Enter the directory and run (as root):
+
+$ make uninstall (Ubuntu users run: $ sudo make uninstall).
