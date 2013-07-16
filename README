@@ -20,7 +20,7 @@ $ sudo apt-get install gcc libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev
 
 Unpack the source code file:
 
-$ tar vxfz griel_quest_src.tar.gz
+$ tar vxfz griels_quest_src_beta.tar.gz
 
 Enter the directory created an run:
 
@@ -31,7 +31,7 @@ $ make install
 
 (Ubuntu users run: $ sudo make install)
 
-A icon will appear in your application menu, in game section. Alternatively you can run the game with the order "abbaye".
+A icon will appear in your application menu, in game section. Alternatively you can run the game with the order "griels".
 
 
 UNINSTALLATION FROM SOURCE
