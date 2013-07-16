@@ -48,6 +48,7 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 	uint loadoninit = 0;
 	uint uplife = 0;
 	uint soundblock = 0;
+	uint grieltouch = 0;
 
 	/* load files */
 	temp = IMG_Load("../png/round.png");
@@ -207,7 +208,10 @@ void game (SDL_Surface *screen, uint *state, uint *level) {
 							/* Show titles */
 							show_tiles (&griel, &animationtime, map, window, blocks, round, counter, key);
 							/* check for obstacles */
-							check_obstacles (&griel, round, map, kill);
+							check_obstacles (&griel, round, map, kill, &grieltouch);
+							/* Griel touched ? */
+							if (grieltouch == 1)
+								*state = 3;
 							/* Show hero */
 							show_hero(&griel, counter, window, blocks, &round, &step, &waittime, &soundblock, giveup);
 							/* Key pressed */
@@ -354,7 +358,7 @@ void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_
 
 }
 
-void check_obstacles (struct hero *griel, int round, int map[][11][16], Mix_Chunk *kill) {
+void check_obstacles (struct hero *griel, int round, int map[][11][16], Mix_Chunk *kill, uint *grieltouch) {
 
 	int deleteobject = 0;
 	int target[2] = {0,0};
@@ -475,6 +479,7 @@ void check_obstacles (struct hero *griel, int round, int map[][11][16], Mix_Chun
 				griel->grial = 1;
 				griel->score += 1000; /* Add to score */
 				deleteobject = 1;
+				*grieltouch = 1;
 		}
 		/* Deleting objects */
 		if (deleteobject == 1) {

@@ -11,6 +11,8 @@ void ending (SDL_Surface *screen, uint *state) {
 	SDL_Surface *ending4 = NULL;
 	SDL_Surface *temp = NULL;
 
+	Mix_Chunk *argh;
+
 	uint waittime = 0;
 	uint step = 0;
 	uint fadecounter = 255;
@@ -33,6 +35,7 @@ void ending (SDL_Surface *screen, uint *state) {
 	temp = IMG_Load("../png/theend.png");
 	ending4 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
+	argh = Mix_LoadWAV("../fx/fx_uaaah.ogg");
 
 	SDL_Rect srcending = {0,0,512,448};
 	SDL_Rect destending = {0,0,512,448};
@@ -61,6 +64,8 @@ void ending (SDL_Surface *screen, uint *state) {
 							SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
 							SDL_BlitSurface(blackbox,&srcending,screen,&destending);
 							counter ++;
+							if (counter == 1070) /* Demon dying */
+								Mix_PlayChannel(0,argh,0);
 							if ((counter > 1069) && (counter < 1153))
 								fadecounter-=3;
 							if ((counter > 2053) && (counter < 2137))
@@ -104,5 +109,6 @@ void ending (SDL_Surface *screen, uint *state) {
 	SDL_FreeSurface(ending3);
 	SDL_FreeSurface(ending4);
 	SDL_FreeSurface(blackbox);
+	Mix_FreeChunk(argh);
 
 }

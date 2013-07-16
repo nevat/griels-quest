@@ -230,5 +230,6 @@ void history (SDL_Surface *screen, uint *state) {
 	SDL_FreeSurface(texts);
 	SDL_FreeSurface(window);
 	Mix_FreeMusic(bso);
+	Mix_FreeChunk(lol);
 
 }
