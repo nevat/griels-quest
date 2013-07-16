@@ -11,6 +11,7 @@ void ending (SDL_Surface *screen, uint *state) {
 	SDL_Surface *ending4 = NULL;
 	SDL_Surface *temp = NULL;
 
+	Mix_Music *bso;
 	Mix_Chunk *argh;
 
 	uint waittime = 0;
@@ -36,6 +37,7 @@ void ending (SDL_Surface *screen, uint *state) {
 	ending4 = SDL_DisplayFormat(temp);
 	SDL_FreeSurface(temp);
 	argh = Mix_LoadWAV("../fx/fx_uaaah.ogg");
+	bso = Mix_LoadMUS("../music/ending.ogg");
 
 	SDL_Rect srcending = {0,0,512,448};
 	SDL_Rect destending = {0,0,512,448};
@@ -49,6 +51,8 @@ void ending (SDL_Surface *screen, uint *state) {
 							SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
 							SDL_BlitSurface(blackbox,&srcending,screen,&destending);
 							counter ++;
+							if (counter == 30)
+								Mix_PlayMusic(bso,0);
 							if (counter < 85)
 								fadecounter-=3;
 							if ((counter > 984) && (counter < 1069))
@@ -110,5 +114,6 @@ void ending (SDL_Surface *screen, uint *state) {
 	SDL_FreeSurface(ending4);
 	SDL_FreeSurface(blackbox);
 	Mix_FreeChunk(argh);
+	Mix_FreeMusic(bso);
 
 }
