@@ -42,7 +42,7 @@ void ending (SDL_Surface *screen, uint *state) {
 	SDL_Rect srcending = {0,0,512,448};
 	SDL_Rect destending = {0,0,512,448};
 
-	while (*state == 4) {
+	while (*state == 3) {
 		framerate = control_frames(1,0);
 		switch (step) {
 			case 0: /* ending 1 */
@@ -102,9 +102,13 @@ void ending (SDL_Surface *screen, uint *state) {
 							counter ++;
 							if ((counter > 3205) && (counter < 3289))
 								fadecounter-=3;
+							if (counter == 4189)
+								*state = 0;
 							break;
 		}
+		SDL_Flip(screen);
 		control_frames(2,framerate);
+		SDL_FreeSurface(screen);
 
 	}
 
