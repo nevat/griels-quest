@@ -7,8 +7,8 @@
 void main() {
 
 	SDL_Surface *screen = NULL;
-	uint state = 2;
-	uint level = 58;
+	uint state = 0;
+	uint level = 0;
 
 	/* starting SDL */
 	initsdl();
