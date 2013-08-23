@@ -2,11 +2,17 @@ ABOUT THIS GAME
 
 "Griel's Quest for the Sangraal" is a game released for MSX2 systems in the year 1990 (only on Japan). In 2005 was ported to MSX1 systems by Karoshi Corp.
 
-This version is a port of MSX1 version of the game to the GNU/Linux systems. Featuring all the levels, objects and enemies. The program is written in C language 
-with the help of SDL libraries.
+This version is a port of MSX1 version of the game to the GNU/Linux systems. Featuring all the levels, objects and enemies. The program is written in C language
+with the help of SDL 1.2 libraries.
 
 The game is licensed under GNU GPL version 3, so anyone can download, see, change and redistributed the code.
 
+KEYS
+
+Use the arrows of keyboard to move Griel.
+F key switch between fullscreen/windowed mode.
+Q key exits the program.
+ESC key will restart the current game (losing a life).
 
 INSTALLATION FOR SOURCE
 

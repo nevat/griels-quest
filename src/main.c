@@ -7,8 +7,8 @@
 void main() {
 
 	SDL_Surface *screen = NULL;
-	uint state = 0;
-	uint level = 0;
+	uint state = 2;
+	uint level = 58;
 
 	/* starting SDL */
 	initsdl();
@@ -69,10 +69,10 @@ void initsdl() {
 int control_frames (int i, int frate) {
 
 	int now = SDL_GetTicks();
-	
+
 	if (i==1)
 		return now;
-	
+
 	if (i==2) {
 		int diff = now - frate;
 		if (diff<16)

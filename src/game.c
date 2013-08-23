@@ -327,6 +327,10 @@ void show_tiles (struct hero *griel, int *animationtime, int map[][11][16], SDL_
 					map[round][i][j] ++;
 				if (((map[round][i][j] == 12) || (map[round][i][j] == 14) || (map[round][i][j] == 16)) && (counter < 30))
 					map[round][i][j] --;
+				if ((map[round][i][j] == 17) && (counter > 29))
+					map[round][i][j] += 2;
+				if ((map[round][i][j] == 19) && (counter < 30))
+					map[round][i][j] -= 2;
 				if ((map[round][i][j] == 25) && (griel->key == 1)) { /* Got key, so open the door */
 					Mix_PlayChannel(-1,key,0);
 					griel->key = 0;
@@ -579,6 +583,8 @@ void controls (struct hero *griel, uint *fullscreench) {
 			}
 			if (keystroke.key.keysym.sym == SDLK_f)
 				*fullscreench = 1;
+			if (keystroke.key.keysym.sym == SDLK_q)
+				exit(0);
 		}
 	}
 
