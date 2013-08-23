@@ -9,7 +9,8 @@ void loaddata (int map[][11][16]) {
 	uint k = 0;
 	FILE *datafile = fopen("/usr/share/griels/data/rounds.txt", "r");
 	char line[49];
-	char temp[2];;
+	char temp[3];
+	temp[2] = 0;
 
 	/* Load data an put in array */
 	fgets (line, 49, datafile);

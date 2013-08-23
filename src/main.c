@@ -68,22 +68,16 @@ void initsdl() {
 
 int control_frames (int i, int frate) {
 
-  int dif = 0;
-  int initial = 0;
-  int final = 0;
-
-	switch (i) {
-
-		case 1: initial = SDL_GetTicks ();
-						return initial;
-						break;
-
-		case 2: while (dif < 16) {
-							final = SDL_GetTicks ();
-							dif = final - frate;
-						}
-						break;
-
+	int now = SDL_GetTicks();
+	
+	if (i==1)
+		return now;
+	
+	if (i==2) {
+		int diff = now - frate;
+		if (diff<16)
+			SDL_Delay(16-diff);
+		return 0;
 	}
 
 }
