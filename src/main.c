@@ -80,4 +80,5 @@ int control_frames (int i, int frate) {
 		return 0;
 	}
 
+	return 0;
 }
