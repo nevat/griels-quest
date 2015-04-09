@@ -4,7 +4,7 @@
 
 # include "main.h"
 
-void main() {
+int main() {
 
 	SDL_Surface *screen = NULL;
 	uint state = 0;
