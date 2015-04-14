@@ -4,7 +4,7 @@
 
 # include "main.h"
 
-void main() {
+int main() {
 
 	SDL_Surface *screen = NULL;
 	uint state = 0;
@@ -80,4 +80,5 @@ int control_frames (int i, int frate) {
 		return 0;
 	}
 
+	return 0;
 }
