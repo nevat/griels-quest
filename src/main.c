@@ -1,84 +1,62 @@
-/* Griel's Quest for the Sangraal */
-/* Started on 17/04/2013 */
-/* Under GPL v3 license */
+// Griel's Quest for the Sangraal
+// Started on 17/04/2013
+// Started to migrate to SDL2 in 27/06/2025 (omg!) 
+// Under GPL v3 license
 
 # include "main.h"
 
+SDL_Renderer *renderer;
+
 int main() {
 
-	SDL_Surface *screen = NULL;
-	uint state = 0;
-	uint level = 0;
+  // SDL_Surface *screen = NULL;
+  uint8_t state = 0;
+  uint8_t level = 0;
+  uint8_t fullscreen = 0;
 
-	/* starting SDL */
-	initsdl();
-	screen = SDL_SetVideoMode(512,448,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); // Init SDL2
+  
+  SDL_Window *screen = SDL_CreateWindow("Griel's Quest for the Sangraal",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,512,448,fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_RESIZABLE); // Creating window
+  
+  // Create renderer
+  renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+  SDL_RenderSetLogicalSize(renderer,256,224);
 
-	/* Loading part of the game */
-	while (state < 4) {
-		switch (state) {
-			case 0: game_intro (screen, &state, &level);
-							break;
-			case 1: history (screen, &state);
-							break;
-			case 2: game (screen, &state, &level);
-							break;
-			case 3: ending (screen,&state);
-							break;
-		}
-	}
+  // Init audio
+  Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,1,4096);
+  Mix_AllocateChannels(3);
 
-}
+  // Init joystick  
+  SDL_Joystick *joystick = NULL;
+  if (SDL_Init(SDL_INIT_JOYSTICK) >= 0) {
+	  joystick = SDL_NumJoysticks() > 0 ? SDL_JoystickOpen(0) : NULL; 
+	  SDL_JoystickEventState(SDL_ENABLE);
+  }
+  
+  SDL_ShowCursor(SDL_DISABLE); // Disable mouse
+  // system("xset r off"); // Disable repeat keys
 
-void initsdl() {
+  // Loading part of the game
+  while (state < 4) {
+    switch (state) {
+      case 0: game_intro (screen, &state, &level);
+	      break;
+      // case 1: history (screen, &state);
+      //      break;
+      // case 2: game (screen, &state, &level);
+      //      break;
+      // case 3: ending (screen,&state);
+      //      break;
+    }
+  }
+  
+  // Cleaning
+  SDL_JoystickClose(joystick);
+  // SDL_DestroyTexture(target);
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(screen);
+  SDL_Quit();
 
-	/* Center the window */
-	putenv("SDL_VIDEO_CENTERED=1");
+  return 0; // Exit
 
-	/* Init SDLVideo */
-		if (SDL_Init(SDL_INIT_VIDEO)<0) {
-			printf("Error starting SDL: %s\n",SDL_GetError());
-			exit(1);
-		}
-		atexit(SDL_Quit);
-	/* Init SDLTTF */
-	  if (TTF_Init() < 0) {
-			printf("Error starting SDL_ttf: %s\n",SDL_GetError());
-			exit(1);
-		}
-		atexit(TTF_Quit);
-
-	  if (Mix_OpenAudio (44100, AUDIO_S16, 1, 4096)) {
-        printf("No se pudo inicializar SDL_Mixer %s\n",Mix_GetError());
-        exit(1);
-		}
-		Mix_AllocateChannels(3);
-		atexit(Mix_CloseAudio);
-
-	/* Name of the window */
-		SDL_WM_SetCaption("Griel's Quest for the Sangraal", "Griel's Quest");
-
-	/* Disable cursor */
-		SDL_ShowCursor(SDL_DISABLE);
-
-	/* Disable repeat keys */
-	  SDL_EnableKeyRepeat(0, 0);
-
-}
-
-int control_frames (int i, int frate) {
-
-	int now = SDL_GetTicks();
-
-	if (i==1)
-		return now;
-
-	if (i==2) {
-		int diff = now - frate;
-		if (diff<16)
-			SDL_Delay(16-diff);
-		return 0;
-	}
-
-	return 0;
 }
