@@ -6,4 +6,5 @@
 # include <SDL_image.h>
 # include <SDL_mixer.h>
 
-void ending (SDL_Surface *screen, uint *state);
+void ending (SDL_Window *screen, uint8_t *state);
+extern SDL_Renderer *renderer;

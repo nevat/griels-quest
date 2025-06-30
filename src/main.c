@@ -41,12 +41,12 @@ int main() {
     switch (state) {
       case 0: game_intro (screen, &state, &level);
 	      break;
-      // case 1: history (screen, &state);
-      //      break;
+      case 1: history (screen, &state);
+              break;
       // case 2: game (screen, &state, &level);
       //      break;
-      // case 3: ending (screen,&state);
-      //      break;
+      case 3: ending (screen,&state);
+              break;
     }
   }
   
