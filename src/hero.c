@@ -202,7 +202,7 @@ void extralife (struct hero *griel, uint8_t *uplife) {
 
 }
 
-void show_hero (struct hero *griel, uint8_t counter, SDL_Surface *window, SDL_Surface *blocks, int *round, int *step, uint16_t *waittime, uint8_t *soundblock, Mix_Chunk *giveup) {
+void show_hero (struct hero *griel, uint8_t counter, SDL_Texture *blocks, uint8_t *round, uint8_t *step, uint16_t *waittime, uint8_t *soundblock, Mix_Chunk *giveup) {
 
   SDL_Rect srchero = {96,32,16,16};
   SDL_Rect desthero = {0,0,16,16};

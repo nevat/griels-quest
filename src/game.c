@@ -2,7 +2,7 @@
 
 # include "game.h"
 
-void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
+void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
 
     // Textures
     SDL_Texture *roundscreen = IMG_LoadTexture(renderer,"png/round.png");
@@ -30,7 +30,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	Mix_Chunk *key = Mix_LoadWAV(DATADIR "/fx/fx_key.ogg");
 	Mix_Chunk *kill = Mix_LoadWAV(DATADIR "/fx/fx_kill.ogg");
 
-	int map[58][11][16]; // Map variable
+	uint8_t map[58][11][16]; // Map variable
 
 	// variables
 	uint8_t step = 0;
@@ -250,7 +250,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
 }
 
-void show_tiles (struct hero *griel, uint8_t *animationtime, int map[][11][16], SDL_Surface *window, SDL_Surface *blocks, uint8_t round, uint8_t counter, Mix_Chunk *key) {
+void show_tiles (struct hero *griel, uint8_t *animationtime, uint8_t map[][11][16], SDL_Texture *blocks, uint8_t round, uint8_t counter, Mix_Chunk *key) {
 
 	SDL_Rect srcblocks = {0,0,16,16};
 	SDL_Rect desblocks = {0,0,16,16};
@@ -305,7 +305,7 @@ void show_tiles (struct hero *griel, uint8_t *animationtime, int map[][11][16], 
 
 }
 
-void check_obstacles (struct hero *griel, uint8_t round, int map[][11][16], Mix_Chunk *kill, uint8_t *grieltouch) {
+void check_obstacles (struct hero *griel, uint8_t round, uint8_t map[][11][16], Mix_Chunk *kill, uint8_t *grieltouch) {
 
 	int deleteobject = 0;
 	int target[2] = {0,0};
