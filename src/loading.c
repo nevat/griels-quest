@@ -2,10 +2,10 @@
 
 # include "loading.h"
 
-void loaddata (int map[][11][16]) {
+void loaddata (uint8_t map[][11][16]) {
 
-	uint i = 0;
-	uint j = 0;
+	uint8_t i = 0;
+	uint8_t j = 0;
 	uint k = 0;
 	FILE *datafile = fopen(DATADIR "/data/rounds.txt", "r");
 	char line[49];

@@ -5,5 +5,5 @@
 # include <SDL.h>
 # include <SDL_mixer.h>
 
-void loaddata (int map[][11][16]);
+void loaddata (uint8_t map[][11][16]);
 void load_music(Mix_Music *bsogame, int round);

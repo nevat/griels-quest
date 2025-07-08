@@ -350,6 +350,6 @@ void show_hero (struct hero *griel, uint8_t counter, SDL_Texture *blocks, uint8_
   }
   desthero.x = griel->x;
   desthero.y = griel->y;
-  SDL_BlitSurface(blocks,&srchero,window,&desthero);
+  SDL_RenderCopy(renderer,blocks,&srchero,&desthero);
 
 }

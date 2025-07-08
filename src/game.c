@@ -2,7 +2,7 @@
 
 # include "game.h"
 
-void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
+void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
     // Textures
     SDL_Texture *roundscreen = IMG_LoadTexture(renderer,"png/round.png");
@@ -23,7 +23,7 @@ void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
     SDL_Texture *passscreen10 = IMG_LoadTexture(renderer,"png/passw10.png");
 
     // Music & sounds
-	// Mix_Music *bsogame;
+	Mix_Music *bsogame;
 	Mix_Music *gameover = Mix_LoadMUS(DATADIR "/music/gameover.ogg");
 	Mix_Chunk *stageclear = Mix_LoadWAV(DATADIR "/music/stageclear.ogg");
 	Mix_Chunk *giveup = Mix_LoadWAV(DATADIR "/fx/fx_giveup.ogg");
@@ -92,6 +92,8 @@ void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
 			case 0: // Show round screen
 				*level = round + 1;
 				desfonts.x = 144;
+				SDL_SetTextureAlphaMod(roundscreen,fadecounter);
+				SDL_SetTextureAlphaMod(fonts,fadecounter);
 				SDL_RenderCopy(renderer,roundscreen,NULL,NULL);
 				if (*level < 10) {
 					srcfonts.x = 0;
@@ -107,9 +109,6 @@ void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
 					desfonts.x = 152;
 					SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
 				}
-				// Apply transparency
-				SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
-				SDL_BlitSurface(blackbox,NULL,window,NULL);
 				if ((fademode == 0) && (fadecounter == 255))
 					// Disable push keys until game start
 					SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
@@ -148,20 +147,20 @@ void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
 				// Show game screen
 				SDL_RenderCopy(renderer,headgame,NULL,NULL);
 				// Show hud
-				show_hud (griel, fonts, window, blocks, round);
+				show_hud (griel, fonts, blocks, round);
 				// Show titles
-				show_tiles (&griel, &animationtime, map, window, blocks, round, counter, key);
+				show_tiles (&griel, &animationtime, map, blocks, round, counter, key);
 				// check for obstacles
 				check_obstacles (&griel, round, map, kill, &grieltouch);
 				// Griel touched ?
 				if (grieltouch == 1)
 					*state = 3;
 				// Show hero
-				show_hero(&griel, counter, window, blocks, &round, &step, &waittime, &soundblock, giveup);
+				show_hero(&griel, counter, blocks, &round, &step, &waittime, &soundblock, giveup);
 				// Key pressed
 				controls(&griel,&fullscreench);
 				if (fullscreench == 1) {
-					SDL_WM_ToggleFullScreen (screen);
+				    SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 					fullscreench = 0;
 				}
 			break;
@@ -178,28 +177,46 @@ void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
 				}
 			break;
 			case 3: // show password info, with fade in & out
-				if (round == 4)
+				if (round == 4) {
+				    SDL_SetTextureAlphaMod(passscreen01,fadecounter);
 					SDL_RenderCopy(renderer,passscreen01,NULL,NULL);
-				if (round == 9)
+				}
+				if (round == 9) {
+				    SDL_SetTextureAlphaMod(passscreen02,fadecounter);
 					SDL_RenderCopy(renderer,passscreen02,NULL,NULL);
-				if (round == 14)
+				}
+				if (round == 14) {
+				    SDL_SetTextureAlphaMod(passscreen03,fadecounter);
 					SDL_RenderCopy(renderer,passscreen03,NULL,NULL);
-				if (round == 19)
+				}
+				if (round == 19) {
+				    SDL_SetTextureAlphaMod(passscreen04,fadecounter);
 					SDL_RenderCopy(renderer,passscreen04,NULL,NULL);
-				if (round == 24)
+				}
+				if (round == 24) {
+				    SDL_SetTextureAlphaMod(passscreen05,fadecounter);
 					SDL_RenderCopy(renderer,passscreen05,NULL,NULL);
-				if (round == 29)
+				}
+				if (round == 29) {
+				    SDL_SetTextureAlphaMod(passscreen06,fadecounter);
 					SDL_RenderCopy(renderer,passscreen06,NULL,NULL);
-				if (round == 35)
+				}
+				if (round == 35) {
+				    SDL_SetTextureAlphaMod(passscreen07,fadecounter);
 					SDL_RenderCopy(renderer,passscreen07,NULL,NULL);
-				if (round == 41)
+				}
+				if (round == 41) {
+				    SDL_SetTextureAlphaMod(passscreen08,fadecounter);
 					SDL_RenderCopy(renderer,passscreen08,NULL,NULL);
-				if (round == 47)
+				}
+				if (round == 47) {
+				    SDL_SetTextureAlphaMod(passscreen09,fadecounter);
 					SDL_RenderCopy(renderer,passscreen09,NULL,NULL);
-				if (round == 53)
+				}
+				if (round == 53) {
+				    SDL_SetTextureAlphaMod(passscreen10,fadecounter);
 					SDL_RenderCopy(renderer,passscreen10,NULL,NULL);
-				SDL_SetAlpha(blackbox,SDL_RLEACCEL|SDL_SRCALPHA,(Uint8)fadecounter);
-				SDL_BlitSurface(blackbox,NULL,window,NULL);
+				}
 				if ((fademode == 0) && (fadecounter == 255))
 					SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
 				if ((fademode == 0) && (fadecounter > 0))
@@ -229,7 +246,7 @@ void game (SDL_Surface *screen, uint8_t *state, uint8_t *level) {
 	SDL_DestroyTexture(headgame);
 	SDL_DestroyTexture(fonts);
 	SDL_DestroyTexture(blackbox);
-	SDL_DestroyTexture(window);
+	// SDL_DestroyTexture(window);
 	SDL_DestroyTexture(gameoverscreen);
 	SDL_DestroyTexture(passscreen01);
 	SDL_DestroyTexture(passscreen02);

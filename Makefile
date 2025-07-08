@@ -4,13 +4,17 @@ CC?=		gcc
 CFLAGS?=	-O2 -finline-functions -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
 
 CFLAGS+=	`sdl2-config --cflags` -DDATADIR="\"$(PREFIX)/share/griels\""
-LIBS=		`sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -lm
+LIBS=		`sdl2-config --libs` -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
 
 PROG=		griels
 SRCS=		src/ending.c \
-		src/history.c \
-		src/intro.c \
-		src/main.c
+		    src/history.c \
+		    src/intro.c \
+			src/game.c \
+			src/hero.c \
+			src/hud.c \
+			src/loading.c \
+		    src/main.c
 
 all: $(PROG)
 
