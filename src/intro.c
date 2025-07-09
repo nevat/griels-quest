@@ -76,8 +76,8 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
         if ((counter > 254) && (counter < 341))
           fadecounter-=3;
         if (counter == 340) {
-          step = 1;
           fadecounter = 0;
+          step = 1;
         }
       break;
       case 1: // Start screen
@@ -106,7 +106,6 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
         }
       break;
       case 2: // Show instructions
-        SDL_RenderCopy(renderer,startinfo,&srcscreen,&destscreen);
         counter ++;
         while (SDL_PollEvent(&keystroke)) {
           if (keystroke.type == SDL_QUIT)
@@ -126,6 +125,35 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
         else
 	  animcounter = 0;
         
+        if ((counter > 1387) && (counter < 1473))
+	  fadecounter+=3;
+        if ((counter > 1387) && (counter < 1989)) {
+          srctext.y = 224;
+          srctext.h = 20;
+          destext.h = 20;
+          SDL_SetTextureAlphaMod(startinfo,fadecounter);
+          SDL_SetTextureAlphaMod(blocks,fadecounter);
+        }
+        if ((counter > 1988) && (counter < 2590)) {
+          srctext.y = 244;
+          srctext.h = 21;
+          destext.h = 21;
+        }
+        if ((counter > 2589) && (counter < 3275))
+          srctext.y = 265;
+        if ((counter > 3190) && (counter < 3275)) {
+          fadecounter -= 3;
+          SDL_SetTextureAlphaMod(startinfo,fadecounter);
+          SDL_SetTextureAlphaMod(blocks,fadecounter);
+        }
+        if (counter == 3274) {
+          step = 0;
+          counter = 0;
+          animcounter = 0;
+        }
+        
+        SDL_RenderCopy(renderer,startinfo,&srcscreen,&destscreen);
+        SDL_RenderCopy(renderer,startinfo,&srctext,&destext);
         // Show animations
         // Hero
         srcblocks.y = 32;
@@ -151,35 +179,6 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
         srcblocks.x = (animcounter / 30) * 16;
         destblocks.y = 96;
         SDL_RenderCopy(renderer,blocks,&srcblocks,&destblocks);
-        if ((counter > 1387) && (counter < 1473))
-	  fadecounter+=3;
-        if ((counter > 1387) && (counter < 1989)) {
-          srctext.y = 224;
-          srctext.h = 20;
-          destext.h = 20;
-          SDL_SetTextureAlphaMod(startinfo,fadecounter);
-          SDL_RenderCopy(renderer,startinfo,&srctext,&destext);
-        }
-        if ((counter > 1988) && (counter < 2590)) {
-          srctext.y = 244;
-          srctext.h = 21;
-          destext.h = 21;
-          SDL_RenderCopy(renderer,startinfo,&srctext,&destext);
-        }
-        if ((counter > 2589) && (counter < 3275)) {
-          srctext.y = 265;
-          SDL_RenderCopy(renderer,startinfo,&srctext,&destext);
-        }
-        if ((counter > 3190) && (counter < 3275)) {
-          fadecounter -= 3;
-          SDL_SetTextureAlphaMod(startinfo,fadecounter);
-          SDL_RenderCopy(renderer,startinfo,&srcscreen,&destscreen);
-        }
-        if (counter == 3274) {
-          step = 0;
-          counter = 0;
-          animcounter = 0;
-        }
       break;
       case 3: // show menu
         SDL_RenderCopy(renderer,menu,NULL,NULL);

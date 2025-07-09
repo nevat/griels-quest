@@ -18,7 +18,7 @@ void history (SDL_Window *screen, uint8_t *state) {
   uint8_t step = 0;
   uint8_t direction = 0;
   uint16_t waittime = 0;
-  uint tire[4] = {0,0,0,0};
+  // uint [4] = {0,0,0,0};
   uint8_t playmusic = 0;
 
   // Rects
@@ -32,10 +32,10 @@ void history (SDL_Window *screen, uint8_t *state) {
   SDL_Rect srcsent2 = {0,32,0,8};
   SDL_Rect srcsent3 = {0,48,0,8};
   SDL_Rect srcsent4 = {0,64,0,8};
-  SDL_Rect destsent1 = {28,120,200,8};
-  SDL_Rect destsent2 = {28,136,200,8};
-  SDL_Rect destsent3 = {28,152,200,8};
-  SDL_Rect destsent4 = {28,168,200,8};
+  SDL_Rect destsent1 = {28,120,0,8};
+  SDL_Rect destsent2 = {28,136,0,8};
+  SDL_Rect destsent3 = {28,152,0,8};
+  SDL_Rect destsent4 = {28,168,0,8};
 
   // Loop
   
@@ -91,26 +91,34 @@ void history (SDL_Window *screen, uint8_t *state) {
         if (waittime < 180)
           waittime ++;
         if (waittime > 179) {
-          if (srcsent1.w < 200)
-            srcsent1.w ++;
+          if (srcsent1.w < 200) {
+            srcsent1.w += 1;
+            destsent1.w = srcsent1.w;
+          }
           SDL_RenderCopy(renderer,texts,&srcsent1,&destsent1);
           if (srcsent1.w == 200) {
-            if (srcsent2.w < 200)
-              srcsent2.w ++;
+            if (srcsent2.w < 200) {
+              srcsent2.w += 1;
+              destsent2.w = srcsent2.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent2,&destsent2);
           }
           if (srcsent2.w == 200) {
-            if (srcsent3.w < 200)
-              srcsent3.w ++;
+            if (srcsent3.w < 200) {
+              srcsent3.w += 1;
+              destsent3.w = srcsent3.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent3,&destsent3);
           }
           if (srcsent3.w == 200) {
-            if (srcsent4.w < 200)
-              srcsent4.w ++;
+            if (srcsent4.w < 200) {
+              srcsent4.w += 1;
+              destsent4.w = srcsent4.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent4,&destsent4);
           }
           if (srcsent4.w == 200) {
-            if (waittime < 300)
+            if (waittime < 600)
               waittime ++;
             else {
               step = 2;
@@ -135,26 +143,34 @@ void history (SDL_Window *screen, uint8_t *state) {
         case 2: // show history 2
           SDL_RenderCopy(renderer,blackbox,NULL,NULL);
           SDL_RenderCopy(renderer,pictures,&srcpicture,&despicture);
-          if (srcsent1.w < 215)
-            srcsent1.w ++;
+          if (srcsent1.w < 215) {
+            srcsent1.w += 1;
+            destsent1.w = srcsent1.w;
+          }
           SDL_RenderCopy(renderer,texts,&srcsent1,&destsent1);
           if (srcsent1.w == 215) {
-            if (srcsent2.w < 215)
-              srcsent2.w ++;
+            if (srcsent2.w < 215) {
+              srcsent2.w += 1;
+              destsent2.w = srcsent2.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent2,&destsent2);
           }
           if (srcsent2.w == 215) {
-            if (srcsent3.w < 215)
-              srcsent3.w ++;
+            if (srcsent3.w < 215) {
+              srcsent3.w += 1;
+              destsent3.w = srcsent3.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent3,&destsent3);
           }
           if (srcsent3.w == 215) {
-            if (srcsent4.w < 215)
-              srcsent4.w ++;
+            if (srcsent4.w < 215) {
+              srcsent4.w += 1;
+              destsent4.w = srcsent4.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent4,&destsent4);
           }
           if (srcsent4.w == 215) {
-            if (waittime < 120)
+            if (waittime < 420)
               waittime ++;
             else {
               step = 3;
@@ -174,26 +190,34 @@ void history (SDL_Window *screen, uint8_t *state) {
         case 3: // show history 3
           SDL_RenderCopy(renderer,blackbox,NULL,NULL);
           SDL_RenderCopy(renderer,pictures,&srcpicture,&despicture);
-          if (srcsent1.w < 215)
-            srcsent1.w ++;
+          if (srcsent1.w < 215) {
+            srcsent1.w += 1;
+            destsent1.w = srcsent1.w;
+          }
           SDL_RenderCopy(renderer,texts,&srcsent1,&destsent1);
           if (srcsent1.w == 215) {
-            if (srcsent2.w < 215)
-              srcsent2.w ++;
+            if (srcsent2.w < 215) {
+              srcsent2.w += 1;
+              destsent2.w = srcsent2.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent2,&destsent2);
           }
           if (srcsent2.w == 215) {
-            if (srcsent3.w < 215)
-              srcsent3.w ++;
+            if (srcsent3.w < 215) {
+              srcsent3.w += 1;
+              destsent3.w = srcsent3.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent3,&destsent3);
           }
           if (srcsent3.w == 215) {
-            if (srcsent4.w < 215)
-              srcsent4.w ++;
+            if (srcsent4.w < 215) {
+              srcsent4.w += 1;
+              destsent4.w = srcsent4.w;
+            }
             SDL_RenderCopy(renderer,texts,&srcsent4,&destsent4);
           }
           if (srcsent4.w == 215) {
-            if (waittime < 120)
+            if (waittime < 420)
               waittime ++;
             else {
               *state = 2;
