@@ -24,11 +24,12 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
     // Music & sounds
     Mix_Music *bsogame;
-    Mix_Music *gameover = Mix_LoadMUS(DATADIR "/music/gameover.ogg");
-    Mix_Chunk *stageclear = Mix_LoadWAV(DATADIR "/music/stageclear.ogg");
-    Mix_Chunk *giveup = Mix_LoadWAV(DATADIR "/fx/fx_giveup.ogg");
-    Mix_Chunk *key = Mix_LoadWAV(DATADIR "/fx/fx_key.ogg");
-    Mix_Chunk *kill = Mix_LoadWAV(DATADIR "/fx/fx_kill.ogg");
+    Mix_Music *gameover = Mix_LoadMUS("music/gameover.ogg");
+    Mix_Chunk *stageclear = Mix_LoadWAV("music/stageclear.ogg");
+    Mix_Chunk *giveup = Mix_LoadWAV("fx/fx_giveup.ogg");
+    Mix_Chunk *key = Mix_LoadWAV("fx/fx_key.ogg");
+    //Mix_Chunk *kill = Mix_LoadWAV(DATADIR "fx/fx_kill.ogg");
+    Mix_Chunk *kill = Mix_LoadWAV("fx/fx_kill.ogg");
 
     uint8_t map[58][11][16]; // Map variable
 
@@ -54,6 +55,8 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
     // Enable repeat keys: Not available in SDL2
     // SDL_EnableKeyRepeat(30, 30);
+    
+    Mix_Volume(-1, MIX_MAX_VOLUME); // Volume to Max
 
     // init array
     struct hero griel = {
@@ -96,18 +99,18 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	        SDL_SetTextureAlphaMod(fonts,fadecounter);
 	        SDL_RenderCopy(renderer,roundscreen,NULL,NULL);
 	        if (*level < 10) {
-		        srcfonts.x = 0;
-		        SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
-		        srcfonts.x = *level * 8;
-		        desfonts.x = 152;
-		        SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+	          srcfonts.x = 0;
+	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+	          srcfonts.x = *level * 8;
+	          desfonts.x = 152;
+	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
 	        }
 	        else {
-		        srcfonts.x = (*level / 10) * 8;
-		        SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
-		        srcfonts.x = (*level - ((*level / 10) * 10)) * 8;
-		        desfonts.x = 152;
-		        SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+	          srcfonts.x = (*level / 10) * 8;
+	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+	          srcfonts.x = (*level - ((*level / 10) * 10)) * 8;
+	          desfonts.x = 152;
+	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
 	        }
 	        if ((fademode == 0) && (fadecounter == 255))
 		  SDL_EventState(SDL_KEYDOWN, SDL_IGNORE); // Disable push keys until game start
@@ -132,6 +135,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	            loadoninit = 1;
 	            fademode = 0;
 	            SDL_EventState(SDL_KEYDOWN, SDL_ENABLE); // Enable pushes keys
+	            SDL_SetTextureAlphaMod(fonts,255); // Make fonts texture visible again
 	          }
 	        }
 	      break;
@@ -167,8 +171,8 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	          // Key pressed
 	          controls(&griel,&fullscreench);
 	          if (fullscreench == 1) {
-	              SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-		          fullscreench = 0;
+                    SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+	            fullscreench = 0;
 	          }
 	        break;
                 case 2: // gameover screen for 10 seconds
@@ -186,43 +190,43 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	        case 3: // show password info, with fade in & out
 	          if (round == 4) {
                     SDL_SetTextureAlphaMod(passscreen01,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen01,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen01,NULL,NULL);
 	          }
 	          if (round == 9) {
                     SDL_SetTextureAlphaMod(passscreen02,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen02,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen02,NULL,NULL);
 	          }
 	          if (round == 14) {
                     SDL_SetTextureAlphaMod(passscreen03,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen03,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen03,NULL,NULL);
 	          }
 	          if (round == 19) {
                     SDL_SetTextureAlphaMod(passscreen04,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen04,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen04,NULL,NULL);
 	          }
 	          if (round == 24) {
                     SDL_SetTextureAlphaMod(passscreen05,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen05,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen05,NULL,NULL);
 	          }
 	          if (round == 29) {
                     SDL_SetTextureAlphaMod(passscreen06,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen06,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen06,NULL,NULL);
 	          }
 	          if (round == 35) {
                     SDL_SetTextureAlphaMod(passscreen07,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen07,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen07,NULL,NULL);
 	          }
 	          if (round == 41) {
                     SDL_SetTextureAlphaMod(passscreen08,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen08,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen08,NULL,NULL);
 	          }
 	          if (round == 47) {
                     SDL_SetTextureAlphaMod(passscreen09,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen09,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen09,NULL,NULL);
 	          }
 	          if (round == 53) {
                     SDL_SetTextureAlphaMod(passscreen10,fadecounter);
-	                SDL_RenderCopy(renderer,passscreen10,NULL,NULL);
+                    SDL_RenderCopy(renderer,passscreen10,NULL,NULL);
 	          }
 	          if ((fademode == 0) && (fadecounter == 255))
 	            SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
