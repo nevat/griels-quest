@@ -290,7 +290,7 @@ void show_hero (struct hero *griel, uint8_t counter, SDL_Texture *blocks, uint8_
       else { /* change round */
         srchero.x = 80;
         srchero.y = 32;
-        if (*waittime < 220)
+        if (*waittime < 320)
           *waittime += 1;
         else {
           if ((*round != 4) && (*round !=10)) {
