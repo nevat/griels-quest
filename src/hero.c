@@ -281,11 +281,11 @@ void show_hero (struct hero *griel, uint8_t counter, SDL_Texture *blocks, uint8_
       }
     }
     if (griel->direction == 5) { /* Exiting stage */
-      if (griel->endanimation < 80) {
+      if (griel->endanimation < 160) {
         griel->endanimation += 1;
         if (griel->endanimation == 1)
 	        Mix_HaltMusic();
-        srchero.x += (griel->endanimation / 20) * 16;
+        srchero.x += (griel->endanimation / 40) * 16;
       }
       else { /* change round */
         srchero.x = 80;
