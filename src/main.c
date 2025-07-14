@@ -29,8 +29,8 @@ int main() {
   // Init joystick
   SDL_Joystick *joystick = NULL;
   if (SDL_Init(SDL_INIT_JOYSTICK) >= 0) {
-	  joystick = SDL_NumJoysticks() > 0 ? SDL_JoystickOpen(0) : NULL;
-	  SDL_JoystickEventState(SDL_ENABLE);
+    joystick = SDL_NumJoysticks() > 0 ? SDL_JoystickOpen(0) : NULL;
+    SDL_JoystickEventState(SDL_ENABLE);
   }
 
   SDL_ShowCursor(SDL_DISABLE); // Disable mouse
