@@ -1,11 +1,12 @@
 /* hud.h */
 
-# include <stdio.h>
-# include <stdlib.h>
-# include <SDL.h>
-# include <SDL_image.h>
+#ifndef HUD_H
+#define HUD_H
 
-# include "array.h"
+#include "common.h"
+#include "array.h"
 
 void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8_t round);
 extern SDL_Renderer *renderer;
+
+#endif
