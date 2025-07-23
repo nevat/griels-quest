@@ -8,13 +8,13 @@ LIBS=		`sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lm
 
 PROG=		griels
 SRCS=		src/ending.c \
-		    src/history.c \
-		    src/intro.c \
+			src/history.c \
+			src/intro.c \
 			src/game.c \
 			src/hero.c \
 			src/hud.c \
 			src/loading.c \
-		    src/main.c
+			src/main.c
 
 all: $(PROG)
 
