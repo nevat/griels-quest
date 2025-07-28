@@ -16,7 +16,7 @@ int main() {
 
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); // Init SDL2
 
-  SDL_Window *screen = SDL_CreateWindow("Griel's Quest for the Sangraal",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,512,448,fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_RESIZABLE); // Creating window
+  SDL_Window *screen = SDL_CreateWindow("Griel's Quest for the Sangraal v1.0",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,512,448,fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_RESIZABLE); // Creating window
 
   // Create renderer
   renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
