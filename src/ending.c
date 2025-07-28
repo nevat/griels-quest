@@ -5,13 +5,13 @@
 void ending (SDL_Window *screen, uint8_t *state) {
 
   // Textures
-  SDL_Texture *ending1 = IMG_LoadTexture(renderer,"png/ending1.png");
-  SDL_Texture *ending2 = IMG_LoadTexture(renderer,"png/ending2.png");
-  SDL_Texture *ending3 = IMG_LoadTexture(renderer,"png/ending3.png");
-  SDL_Texture *ending4 = IMG_LoadTexture(renderer,"png/theend.png");
+  SDL_Texture *ending1 = IMG_LoadTexture(renderer,DATADIR "/png/ending1.png");
+  SDL_Texture *ending2 = IMG_LoadTexture(renderer,DATADIR "/png/ending2.png");
+  SDL_Texture *ending3 = IMG_LoadTexture(renderer,DATADIR "/png/ending3.png");
+  SDL_Texture *ending4 = IMG_LoadTexture(renderer,DATADIR "/png/theend.png");
 
-  Mix_Chunk *argh = Mix_LoadWAV("fx/fx_uaaah.ogg"); // Sound
-  Mix_Music *bso = Mix_LoadMUS("music/ending.ogg"); // Music
+  Mix_Chunk *argh = Mix_LoadWAV(DATADIR "/fx/fx_uaaah.ogg"); // Sound
+  Mix_Music *bso = Mix_LoadMUS(DATADIR "/music/ending.ogg"); // Music
   
   SDL_Event keystroke; // Keyboard
 

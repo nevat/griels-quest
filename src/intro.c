@@ -5,21 +5,21 @@
 void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
   // Textures
-  SDL_Texture *blackbox = IMG_LoadTexture(renderer,"png/blackbox.png");
-  SDL_Texture *karoshi = IMG_LoadTexture(renderer,"png/karoshi.png");
-  SDL_Texture *blocks = IMG_LoadTexture(renderer,"png/blocks.png");
-  SDL_Texture *startscreen = IMG_LoadTexture(renderer,"png/startscreen.png");
-  SDL_Texture *startinfo = IMG_LoadTexture(renderer,"png/startinfo.png");
-  SDL_Texture *menu = IMG_LoadTexture(renderer,"png/menu.png");
-  SDL_Texture *arrow = IMG_LoadTexture(renderer,"png/fonts.png");
-  SDL_Texture *passwords = IMG_LoadTexture(renderer,"png/password.png");
-  SDL_Texture *fonts = IMG_LoadTexture(renderer,"png/fonts.png");
+  SDL_Texture *blackbox = IMG_LoadTexture(renderer,DATADIR "/png/blackbox.png");
+  SDL_Texture *karoshi = IMG_LoadTexture(renderer,DATADIR "/png/karoshi.png");
+  SDL_Texture *blocks = IMG_LoadTexture(renderer,DATADIR "/png/blocks.png");
+  SDL_Texture *startscreen = IMG_LoadTexture(renderer,DATADIR "/png/startscreen.png");
+  SDL_Texture *startinfo = IMG_LoadTexture(renderer,DATADIR "/png/startinfo.png");
+  SDL_Texture *menu = IMG_LoadTexture(renderer,DATADIR "/png/menu.png");
+  SDL_Texture *arrow = IMG_LoadTexture(renderer,DATADIR "/png/fonts.png");
+  SDL_Texture *passwords = IMG_LoadTexture(renderer,DATADIR "/png/password.png");
+  SDL_Texture *fonts = IMG_LoadTexture(renderer,DATADIR "/png/fonts.png");
   
   // Sounds
-  Mix_Chunk *start = Mix_LoadWAV("fx/fx_start.ogg");
-  Mix_Chunk *poff = Mix_LoadWAV("fx/fx_poff.ogg");
-  Mix_Chunk *error = Mix_LoadWAV("fx/fx_error.ogg");
-  Mix_Chunk *ding = Mix_LoadWAV("fx/fx_ding.ogg");
+  Mix_Chunk *start = Mix_LoadWAV(DATADIR "/fx/fx_start.ogg");
+  Mix_Chunk *poff = Mix_LoadWAV(DATADIR "/fx/fx_poff.ogg");
+  Mix_Chunk *error = Mix_LoadWAV(DATADIR "/fx/fx_error.ogg");
+  Mix_Chunk *ding = Mix_LoadWAV(DATADIR "/fx/fx_ding.ogg");
 
   SDL_Event keystroke; // Keyboard
 

@@ -5,31 +5,30 @@
 void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
     // Textures
-    SDL_Texture *roundscreen = IMG_LoadTexture(renderer,"png/round.png");
-    SDL_Texture *blocks = IMG_LoadTexture(renderer,"png/blocks.png");
-    SDL_Texture *headgame = IMG_LoadTexture(renderer,"png/gamehead.png");
-    SDL_Texture *fonts = IMG_LoadTexture(renderer,"png/fonts.png");
-    SDL_Texture *blackbox = IMG_LoadTexture(renderer,"png/blackbox.png");
-    SDL_Texture *gameoverscreen = IMG_LoadTexture(renderer,"png/gameover.png");
-    SDL_Texture *passscreen01 = IMG_LoadTexture(renderer,"png/passw1.png");
-    SDL_Texture *passscreen02 = IMG_LoadTexture(renderer,"png/passw2.png");
-    SDL_Texture *passscreen03 = IMG_LoadTexture(renderer,"png/passw3.png");
-    SDL_Texture *passscreen04 = IMG_LoadTexture(renderer,"png/passw4.png");
-    SDL_Texture *passscreen05 = IMG_LoadTexture(renderer,"png/passw5.png");
-    SDL_Texture *passscreen06 = IMG_LoadTexture(renderer,"png/passw6.png");
-    SDL_Texture *passscreen07 = IMG_LoadTexture(renderer,"png/passw7.png");
-    SDL_Texture *passscreen08 = IMG_LoadTexture(renderer,"png/passw8.png");
-    SDL_Texture *passscreen09 = IMG_LoadTexture(renderer,"png/passw9.png");
-    SDL_Texture *passscreen10 = IMG_LoadTexture(renderer,"png/passw10.png");
+    SDL_Texture *roundscreen = IMG_LoadTexture(renderer,DATADIR "/png/round.png");
+    SDL_Texture *blocks = IMG_LoadTexture(renderer,DATADIR "/png/blocks.png");
+    SDL_Texture *headgame = IMG_LoadTexture(renderer,DATADIR "/png/gamehead.png");
+    SDL_Texture *fonts = IMG_LoadTexture(renderer,DATADIR "/png/fonts.png");
+    SDL_Texture *blackbox = IMG_LoadTexture(renderer,DATADIR "/png/blackbox.png");
+    SDL_Texture *gameoverscreen = IMG_LoadTexture(renderer,DATADIR "/png/gameover.png");
+    SDL_Texture *passscreen01 = IMG_LoadTexture(renderer,DATADIR "/png/passw1.png");
+    SDL_Texture *passscreen02 = IMG_LoadTexture(renderer,DATADIR "/png/passw2.png");
+    SDL_Texture *passscreen03 = IMG_LoadTexture(renderer,DATADIR "/png/passw3.png");
+    SDL_Texture *passscreen04 = IMG_LoadTexture(renderer,DATADIR "/png/passw4.png");
+    SDL_Texture *passscreen05 = IMG_LoadTexture(renderer,DATADIR "/png/passw5.png");
+    SDL_Texture *passscreen06 = IMG_LoadTexture(renderer,DATADIR "/png/passw6.png");
+    SDL_Texture *passscreen07 = IMG_LoadTexture(renderer,DATADIR "/png/passw7.png");
+    SDL_Texture *passscreen08 = IMG_LoadTexture(renderer,DATADIR "/png/passw8.png");
+    SDL_Texture *passscreen09 = IMG_LoadTexture(renderer,DATADIR "/png/passw9.png");
+    SDL_Texture *passscreen10 = IMG_LoadTexture(renderer,DATADIR "/png/passw10.png");
 
     // Music & sounds
     Mix_Music *bsogame;
-    Mix_Music *gameover = Mix_LoadMUS("music/gameover.ogg");
-    Mix_Chunk *stageclear = Mix_LoadWAV("music/stageclear.ogg");
-    Mix_Chunk *giveup = Mix_LoadWAV("fx/fx_giveup.ogg");
-    Mix_Chunk *key = Mix_LoadWAV("fx/fx_key.ogg");
-    //Mix_Chunk *kill = Mix_LoadWAV(DATADIR "fx/fx_kill.ogg");
-    Mix_Chunk *kill = Mix_LoadWAV("fx/fx_kill.ogg");
+    Mix_Music *gameover = Mix_LoadMUS(DATADIR "/music/gameover.ogg");
+    Mix_Chunk *stageclear = Mix_LoadWAV(DATADIR "/music/stageclear.ogg");
+    Mix_Chunk *giveup = Mix_LoadWAV(DATADIR "/fx/fx_giveup.ogg");
+    Mix_Chunk *key = Mix_LoadWAV(DATADIR "/fx/fx_key.ogg");
+    Mix_Chunk *kill = Mix_LoadWAV(DATADIR "/fx/fx_kill.ogg");
 
     uint8_t map[58][11][16]; // Map variable
 

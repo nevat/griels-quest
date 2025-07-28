@@ -5,14 +5,14 @@
 void history (SDL_Window *screen, uint8_t *state) {
 
   // Textures
-  SDL_Texture *pictures = IMG_LoadTexture(renderer,"png/howtoplay.png");
-  SDL_Texture *blackbox = IMG_LoadTexture(renderer,"png/blackbox.png");
-  SDL_Texture *texts = IMG_LoadTexture(renderer,"png/texts.png");
+  SDL_Texture *pictures = IMG_LoadTexture(renderer,DATADIR "/png/howtoplay.png");
+  SDL_Texture *blackbox = IMG_LoadTexture(renderer,DATADIR "/png/blackbox.png");
+  SDL_Texture *texts = IMG_LoadTexture(renderer,DATADIR "/png/texts.png");
 
   SDL_Event keystroke; // Keyboard
 
-  Mix_Music *bso = Mix_LoadMUS("music/history.ogg"); // Music
-  Mix_Chunk *lol = Mix_LoadWAV("fx/fx_hahaha.ogg"); // Sound
+  Mix_Music *bso = Mix_LoadMUS(DATADIR "/music/history.ogg"); // Music
+  Mix_Chunk *lol = Mix_LoadWAV(DATADIR "/fx/fx_hahaha.ogg"); // Sound
 
   //Variables
   uint8_t step = 0;
