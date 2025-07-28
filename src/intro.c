@@ -49,10 +49,17 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
   uint8_t validatepass = 0;
   uint8_t i = 0;
   uint8_t result = 0;
+  uint8_t fullscreench = 0;
 
   // Loop
   while (*state == 0) {
     SDL_RenderClear(renderer);
+    
+    if (fullscreench == 1) { // Switch to fullscreen
+      SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+      fullscreench = 0;
+    }
+    
     switch (step) {
       case 0: // Karoshi logo
         SDL_SetTextureAlphaMod(karoshi,fadecounter);
@@ -63,6 +70,10 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
             exit(0);
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
+              exit(0);
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
+            if (keystroke.key.keysym.sym == SDLK_q)
               exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE) {
               counter = 341;;
@@ -90,6 +101,10 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
               exit(0);
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE) {
               Mix_PlayChannel(-1,start,0);
               step = 3;
@@ -113,6 +128,10 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
           if (keystroke.type == SDL_KEYDOWN) {
 	    if (keystroke.key.keysym.sym == SDLK_ESCAPE)
 	        exit(0);
+	    if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
 	    if (keystroke.key.keysym.sym == SDLK_SPACE) {
 	        step = 1;
 		counter = 341;
@@ -193,6 +212,10 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
               exit(0);
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if ((keystroke.key.keysym.sym == SDLK_UP) || (keystroke.key.keysym.sym == SDLK_DOWN)) {
               if (posarrow == 0)
                 posarrow = 1;
@@ -220,6 +243,10 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
 	      exit(0);
+	    if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if (keystroke.key.keysym.sym == SDLK_RIGHT) {
 	      if (destselector.x < 173) {
 	        destselector.x += 16;

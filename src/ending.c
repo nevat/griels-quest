@@ -19,6 +19,7 @@ void ending (SDL_Window *screen, uint8_t *state) {
   uint8_t step = 0;
   uint16_t fadecounter = 0;
   uint16_t counter = 0;
+  uint8_t fullscreench = 0;
   
   // Rects
   SDL_Rect srcending = {0,0,512,448};
@@ -27,6 +28,11 @@ void ending (SDL_Window *screen, uint8_t *state) {
   while (*state == 3) {
   
     SDL_RenderClear(renderer);
+    
+    if (fullscreench == 1) { // Change to fullscreen
+      SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+      fullscreench = 0;
+    }
     
     switch (step) {
       case 0: // ending 1
@@ -49,8 +55,12 @@ void ending (SDL_Window *screen, uint8_t *state) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
               exit(0);
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE)
               *state = 0;
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
           }
         }
       break;
@@ -74,8 +84,12 @@ void ending (SDL_Window *screen, uint8_t *state) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
               exit(0);
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE)
               *state = 0;
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
           }
         }
       break;
@@ -97,8 +111,12 @@ void ending (SDL_Window *screen, uint8_t *state) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
               exit(0);
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE)
               *state = 0;
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
           }
         }
       break;
@@ -116,8 +134,12 @@ void ending (SDL_Window *screen, uint8_t *state) {
           if (keystroke.type == SDL_KEYDOWN) {
             if (keystroke.key.keysym.sym == SDLK_ESCAPE)
               exit(0);
+            if (keystroke.key.keysym.sym == SDLK_q)
+              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE)
               *state = 0;
+            if (keystroke.key.keysym.sym == SDLK_f)
+              fullscreench = 1;
           }
         }
       break;

@@ -18,8 +18,8 @@ void history (SDL_Window *screen, uint8_t *state) {
   uint8_t step = 0;
   uint8_t direction = 0;
   uint16_t waittime = 0;
-  // uint [4] = {0,0,0,0};
   uint8_t playmusic = 0;
+  uint8_t fullscreench = 0;
 
   // Rects
   SDL_Rect srctitle = {0,0,256,16};
@@ -48,9 +48,17 @@ void history (SDL_Window *screen, uint8_t *state) {
       if (keystroke.type == SDL_KEYDOWN) {
         if (keystroke.key.keysym.sym == SDLK_ESCAPE)
           exit(0);
+        if (keystroke.key.keysym.sym == SDLK_q)
+          exit(0);
         if (keystroke.key.keysym.sym == SDLK_SPACE)
           *state = 2;
+        if (keystroke.key.keysym.sym == SDLK_f)
+          fullscreench = 1;
       }
+    }
+    if (fullscreench == 1) {
+      SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+      fullscreench = 0;
     }
     switch (step) {
       case 0: // show title
