@@ -32,17 +32,28 @@ void loaddata (uint8_t map[][11][16]) {
 
 void load_music(Mix_Music *bsogame, int round) {
 
-  if ((round == 0) || (round == 5) || (round == 10) || (round == 15) || (round == 20) || (round == 25) || (round == 30) || (round == 35) || (round == 40) || (round == 45) || (round == 50) || (round == 55))
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage1.ogg");
-  if ((round == 1) || (round == 6) || (round == 11) || (round == 16) || (round == 21) || (round == 26) || (round == 31) || (round == 36) || (round == 41) || (round == 46) || (round == 51) || (round == 56))
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage2.ogg");
-  if ((round == 2) || (round == 7) || (round == 12) || (round == 17) || (round == 22) || (round == 27) || (round == 32) || (round == 37) || (round == 42) || (round == 47) || (round == 52) || (round == 57))
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage3.ogg");
-  if ((round == 3) || (round == 8) || (round == 13) || (round == 18) || (round == 23) || (round == 28) || (round == 33) || (round == 38) || (round == 43) || (round == 48) || (round == 53))
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage4.ogg");
-  if ((round == 4) || (round == 9) || (round == 14) || (round == 19) || (round == 24) || (round == 29) || (round == 34) || (round == 39) || (round == 44) || (round == 49) || (round == 54))
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage5.ogg");
+  if(bsogame) {
+    Mix_FreeMusic(bsogame);
+  }
 
-  Mix_PlayMusic(bsogame, -1);
+  switch(round % 5) {
+  case 0:
+    bsogame = Mix_LoadMUS(DATADIR "/music/stage1.ogg");
+    break;
+  case 1:
+    bsogame = Mix_LoadMUS(DATADIR "/music/stage2.ogg");
+    break;
+  case 2:
+    bsogame = Mix_LoadMUS(DATADIR "/music/stage3.ogg");
+    break;
+  case 3:
+    bsogame = Mix_LoadMUS(DATADIR "/music/stage4.ogg");
+    break;
+  case 4:
+    bsogame = Mix_LoadMUS(DATADIR "/music/stage5.ogg");
+    break;
+  }
+
+  Mix_PlayMusic(bsogame, -1); // play looped
 
 }

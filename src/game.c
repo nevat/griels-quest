@@ -268,7 +268,9 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
     SDL_DestroyTexture(passscreen08);
     SDL_DestroyTexture(passscreen09);
     SDL_DestroyTexture(passscreen10);
-    // Mix_FreeMusic(bsogame);
+    if(bsogame) {
+      Mix_FreeMusic(bsogame);
+    }
     Mix_FreeMusic(gameover);
     Mix_FreeChunk(stageclear);
     Mix_FreeChunk(giveup);
