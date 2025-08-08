@@ -388,6 +388,17 @@ uint8_t passwvalidate (uint8_t passint[]) {
 
   uint8_t n = 0;
 
+#if DEBUG
+  // level jump
+  if ((passint[0] == 12 /*L*/) && (passint[1] == 10 /*J*/)) {
+    n = (passint[2] - 27) * 10 + (passint[3] - 27);
+
+    // validate
+    if(n < 0 || n > 58)
+      n = 0;
+  }
+#endif
+
   if ((passint[0] == 7) && (passint[1] == 5) && (passint[2] == 14) && (passint[3] == 5) && (passint[4] == 19) && (passint[5] == 9) && (passint[6] == 19) && (passint[7] == 0))
     n = 6;
 
