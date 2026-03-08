@@ -9,13 +9,33 @@ static void handleControls() {
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT)
       g_state.scene = GS_EXIT;
-    if (e.type == SDL_KEYDOWN) {
-      if (e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q)
-        g_state.scene = GS_EXIT;
-      if (e.key.keysym.sym == SDLK_SPACE)
-        g_state.scene = GS_GAME;
-      if (e.key.keysym.sym == SDLK_f)
-        toggleFullScreen();
+    else if (e.type == SDL_KEYDOWN) {
+      switch(e.key.keysym.sym) {
+        case SDLK_ESCAPE:
+        case SDLK_q:
+          g_state.scene = GS_EXIT;
+          break;
+        case SDLK_SPACE:
+          g_state.scene = GS_GAME;
+          break;
+        case SDLK_f:
+          toggleFullScreen();
+          break;
+      }
+    }
+    else if (e.type == SDL_CONTROLLERBUTTONDOWN) {
+      switch(e.cbutton.button) {
+        case SDL_CONTROLLER_BUTTON_START:
+          g_state.scene = GS_EXIT;
+          break;
+        case SDL_CONTROLLER_BUTTON_A:
+          rumbleController(CR_DECISION);
+          g_state.scene = GS_GAME;
+          break;
+        case SDL_CONTROLLER_BUTTON_BACK:
+          toggleFullScreen();
+          break;
+      }
     }
   }
 }

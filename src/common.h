@@ -24,6 +24,13 @@ typedef enum {
 	GS_EXIT
 } GameScene;
 
+typedef enum {
+	CR_DECISION,
+	CR_POW,
+	CR_DEATH,
+	CR_GRAIL
+} ControllerRumble;
+
 typedef struct {
 	int score;
 	uint lifes;

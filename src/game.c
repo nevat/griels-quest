@@ -3,50 +3,137 @@
 #include "game.h"
 #include "main.h"
 
-static void handleControls (hero_s *griel) {
+static void handleQuit() {
   SDL_Event e;
 
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT)
       g_state.scene = GS_EXIT;
-    if (e.type == SDL_KEYDOWN) {
-      if (e.key.keysym.sym == SDLK_ESCAPE) {
-        if ((griel->locked == 0) && (griel->deathanimation == 0)) {
-          griel->locked = 1;
-          griel->direction = 6;
-        }
-      }
-      if (e.key.keysym.sym == SDLK_UP) {
-        if ((griel->locked == 0) && (griel->positiony > 0)) {
-          griel->locked = 1;
-          griel->direction = 1;
-        }
-      }
-      if (e.key.keysym.sym == SDLK_DOWN) {
-        if ((griel->locked == 0) && (griel->positiony < 10)) {
-          griel->locked = 1;
-          griel->direction = 2;
-        }
-      }
-      if (e.key.keysym.sym == SDLK_LEFT) {
-        if ((griel->locked == 0) && (griel->positionx > 0)) {
-          griel->locked = 1;
-          griel->direction = 3;
-        }
-      }
-      if (e.key.keysym.sym == SDLK_RIGHT) {
-        if ((griel->locked == 0) && (griel->positionx < 15)) {
-          griel->locked = 1;
-          griel->direction = 4;
-        }
-      }
-      if (e.key.keysym.sym == SDLK_f)
-        toggleFullScreen();
-      if (e.key.keysym.sym == SDLK_q)
+    else if (e.type == SDL_KEYDOWN) {
+      if(e.key.keysym.sym == SDLK_q)
+        g_state.scene = GS_EXIT;
+    }
+    else if (e.type == SDL_CONTROLLERBUTTONDOWN) {
+      if(e.cbutton.button == SDL_CONTROLLER_BUTTON_START)
         g_state.scene = GS_EXIT;
     }
   }
+}
 
+static void handleControls(hero_s *griel) {
+  SDL_Event e;
+  bool is_dead, is_up, is_down, is_left, is_right;
+
+  while (SDL_PollEvent(&e)) {
+    is_dead = false;
+    is_up = false;
+    is_down = false;
+    is_left = false;
+    is_right = false;
+
+    if (e.type == SDL_QUIT)
+      g_state.scene = GS_EXIT;
+    else if (e.type == SDL_KEYDOWN) {
+      switch(e.key.keysym.sym) {
+        case SDLK_ESCAPE:
+          is_dead = true;
+          break;
+        case SDLK_UP:
+          is_up = true;
+          break;
+        case SDLK_DOWN:
+          is_down = true;
+          break;
+        case SDLK_LEFT:
+          is_left = true;
+          break;
+        case SDLK_RIGHT:
+          is_right = true;
+          break;
+        case SDLK_f:
+          toggleFullScreen();
+          break;
+        case SDLK_q:
+          g_state.scene = GS_EXIT;
+          break;
+      }
+    }
+    else if (e.type == SDL_CONTROLLERBUTTONDOWN) {
+      switch(e.cbutton.button) {
+        case SDL_CONTROLLER_BUTTON_B:
+          rumbleController(CR_DEATH);
+          is_dead = true;
+          break;
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
+          is_up = true;
+          break;
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+          is_down = true;
+          break;
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+          is_left = true;
+          break;
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+          is_right = true;
+          break;
+        case SDL_CONTROLLER_BUTTON_BACK:
+          toggleFullScreen();
+          break;
+        case SDL_CONTROLLER_BUTTON_START:
+          g_state.scene = GS_EXIT;
+          break;
+      }
+    }
+    else if (e.type == SDL_CONTROLLERAXISMOTION) {
+      switch(e.caxis.axis) {
+        case SDL_CONTROLLER_AXIS_LEFTY:
+          if (e.caxis.value < -10000)
+            is_up = true;
+          else if (e.caxis.value > 10000)
+            is_down = true;
+          break;
+        case SDL_CONTROLLER_AXIS_LEFTX:
+          if (e.caxis.value < -10000)
+            is_left = true;
+          else if (e.caxis.value > 10000)
+            is_right = true;
+          break;
+      }
+    }
+
+    if(is_dead) {
+      if ((griel->locked == 0) && (griel->deathanimation == 0)) {
+        griel->locked = 1;
+        griel->direction = 6;
+      }
+    }
+    // priorize up over down
+    if(is_up) {
+      if ((griel->locked == 0) && (griel->positiony > 0)) {
+        griel->locked = 1;
+        griel->direction = 1;
+      }
+    }
+    else if(is_down) {
+      if ((griel->locked == 0) && (griel->positiony < 10)) {
+        griel->locked = 1;
+        griel->direction = 2;
+      }
+    }
+    // priorize left over right
+    if(is_left) {
+      if ((griel->locked == 0) && (griel->positionx > 0)) {
+        griel->locked = 1;
+        griel->direction = 3;
+      }
+    }
+    else if(is_right) {
+      if ((griel->locked == 0) && (griel->positionx < 15)) {
+        griel->locked = 1;
+        griel->direction = 4;
+      }
+    }
+  }
 }
 
 void game () {
@@ -135,6 +222,7 @@ void game () {
 	      counter = 0;
 	    switch (step) {
 	      case 0: // Show round screen
+          handleQuit();
 	        g_state.level = round + 1;
 	        desfonts.x = 144;
 	        SDL_SetTextureAlphaMod(roundscreen,fadecounter);
@@ -154,8 +242,10 @@ void game () {
 	          desfonts.x = 152;
 	          SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
 	        }
-	        if ((fademode == 0) && (fadecounter == 255))
-		  SDL_EventState(SDL_KEYDOWN, SDL_IGNORE); // Disable push keys until game start
+	        if ((fademode == 0) && (fadecounter == 255)) {
+            SDL_EventState(SDL_KEYDOWN, SDL_IGNORE); // Disable push keys until game start
+            SDL_GameControllerEventState(SDL_IGNORE);
+          }
 	        if ((fademode == 0) && (fadecounter < 255))
 		  fadecounter += 3;
 	        if ((fademode == 1) && (fadecounter > 0))
@@ -177,6 +267,7 @@ void game () {
 	            loadoninit = 1;
 	            fademode = 0;
 	            SDL_EventState(SDL_KEYDOWN, SDL_ENABLE); // Enable pushes keys
+              SDL_GameControllerEventState(SDL_ENABLE);
 	            SDL_SetTextureAlphaMod(fonts,255); // Make fonts texture visible again
 	          }
 	        }
@@ -214,6 +305,7 @@ void game () {
 	          handleControls(&griel);
 	        break;
                 case 2: // gameover screen for 10 seconds
+                  handleQuit();
                   if (waittime < 600) {
                     waittime ++;
                     SDL_RenderCopy(g_state.renderer,gameoverscreen,NULL,NULL);
@@ -226,6 +318,7 @@ void game () {
                   }
                 break;
 	        case 3: // show password info, with fade in & out
+            handleQuit();
 	          if (round == 4) {
                     SDL_SetTextureAlphaMod(passscreen01,fadecounter);
                     SDL_RenderCopy(g_state.renderer,passscreen01,NULL,NULL);
@@ -266,8 +359,10 @@ void game () {
                     SDL_SetTextureAlphaMod(passscreen10,fadecounter);
                     SDL_RenderCopy(g_state.renderer,passscreen10,NULL,NULL);
 	          }
-	          if ((fademode == 0) && (fadecounter == 255))
+	          if ((fademode == 0) && (fadecounter == 255)) {
 	            SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
+              SDL_GameControllerEventState(SDL_IGNORE);
+            }
 	          if ((fademode == 0) && (fadecounter > 0))
 	            fadecounter += 3;
 	          if ((fademode == 1) && (fadecounter < 255))
@@ -438,6 +533,7 @@ void check_obstacles (hero_s *griel, uint8_t round, uint8_t map[][11][16], Mix_C
     if ((target[0] == 11) || (target[0] == 12)) { // Slim
       if (griel->object == 1) {
         Mix_PlayChannel(-1,kill,0);
+        rumbleController(CR_POW);
         deleteobject = 1;
         griel->object = 0;
         griel->score += 10;
@@ -451,6 +547,7 @@ void check_obstacles (hero_s *griel, uint8_t round, uint8_t map[][11][16], Mix_C
       if (griel->object == 2) {
         deleteobject = 1;
         Mix_PlayChannel(-1,kill,0);
+        rumbleController(CR_POW);
         griel->object = 0;
         griel->score += 60;
       }
@@ -463,6 +560,7 @@ void check_obstacles (hero_s *griel, uint8_t round, uint8_t map[][11][16], Mix_C
       if (griel->object == 3) {
         deleteobject = 1;
         Mix_PlayChannel(-1,kill,0);
+        rumbleController(CR_POW);
         griel->object = 0;
         griel->score += 30;
       }
@@ -494,6 +592,7 @@ void check_obstacles (hero_s *griel, uint8_t round, uint8_t map[][11][16], Mix_C
       griel->score += 1000; // Add to score
       deleteobject = 1;
       *grieltouch = 1;
+      rumbleController(CR_GRAIL);
     }
     // Deleting objects
     if (deleteobject == 1) {

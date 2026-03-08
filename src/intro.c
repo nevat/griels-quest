@@ -6,11 +6,26 @@
 static void handleCommonControls(SDL_Event *e) {
   if (e->type == SDL_QUIT)
     g_state.scene = GS_EXIT;
-  if (e->type == SDL_KEYDOWN) {
-    if (e->key.keysym.sym == SDLK_ESCAPE || e->key.keysym.sym == SDLK_q)
-      g_state.scene = GS_EXIT;
-    if (e->key.keysym.sym == SDLK_f)
-      toggleFullScreen();
+  else if (e->type == SDL_KEYDOWN) {
+    switch(e->key.keysym.sym) {
+      case SDLK_ESCAPE:
+      case SDLK_q:
+        g_state.scene = GS_EXIT;
+        break;
+      case SDLK_f:
+        toggleFullScreen();
+        break;
+    }
+  }
+  else if (e->type == SDL_CONTROLLERBUTTONDOWN) {
+    switch(e->cbutton.button) {
+      case SDL_CONTROLLER_BUTTON_START:
+        g_state.scene = GS_EXIT;
+        break;
+      case SDL_CONTROLLER_BUTTON_BACK:
+        toggleFullScreen();
+        break;
+    }
   }
 }
 
@@ -33,7 +48,7 @@ void game_intro () {
   Mix_Chunk *error = Mix_LoadWAV(DATADIR "/fx/fx_error.ogg");
   Mix_Chunk *ding = Mix_LoadWAV(DATADIR "/fx/fx_ding.ogg");
 
-  SDL_Event keystroke; // Keyboard
+  SDL_Event event; // Keyboard or Controller
 
   // Rects
   SDL_Rect srcscreen = {0,0,256,224};
@@ -71,14 +86,23 @@ void game_intro () {
         SDL_SetTextureAlphaMod(karoshi,fadecounter);
         SDL_RenderCopy(g_state.renderer,karoshi,&srcscreen,&destscreen);
         counter ++;
-        while (SDL_PollEvent(&keystroke)) {
-          handleCommonControls(&keystroke);
-          if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_SPACE) {
-              counter = 341;
-              step = 1;
-              fadecounter = 255;
+        while (SDL_PollEvent(&event)) {
+          handleCommonControls(&event);
+          bool is_next = false;
+          if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_SPACE)
+              is_next = true;
+          }
+          else if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+            if (event.cbutton.button == SDL_CONTROLLER_BUTTON_A) {
+              rumbleController(CR_DECISION);
+              is_next = true;
             }
+          }
+          if(is_next) {
+            counter = 341;
+            step = 1;
+            fadecounter = 255;
           }
         }
         if (counter < 85)
@@ -94,13 +118,22 @@ void game_intro () {
         SDL_SetTextureAlphaMod(startscreen,fadecounter);
         SDL_RenderCopy(g_state.renderer,startscreen,&srcscreen,&destscreen);
         counter ++;
-        while (SDL_PollEvent(&keystroke)) {
-          handleCommonControls(&keystroke);
-          if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_SPACE) {
-              Mix_PlayChannel(-1,start,0);
-              step = 3;
+        while (SDL_PollEvent(&event)) {
+          handleCommonControls(&event);
+          bool is_next = false;
+          if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_SPACE)
+              is_next = true;
+          }
+          else if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+            if (event.cbutton.button == SDL_CONTROLLER_BUTTON_A) {
+              rumbleController(CR_DECISION);
+              is_next = true;
             }
+          }
+          if(is_next) {
+            Mix_PlayChannel(-1,start,0);
+            step = 3;
           }
         }
         if ((counter > 340) && (counter < 426))
@@ -114,14 +147,23 @@ void game_intro () {
       break;
       case 2: // Show instructions
         counter ++;
-        while (SDL_PollEvent(&keystroke)) {
-          handleCommonControls(&keystroke);
-          if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_SPACE) {
-              step = 1;
-              counter = 341;
-              fadecounter = 255;
+        while (SDL_PollEvent(&event)) {
+          handleCommonControls(&event);
+          bool is_next = false;
+          if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_SPACE)
+              is_next = true;
+          }
+          else if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+            if (event.cbutton.button == SDL_CONTROLLER_BUTTON_A) {
+              rumbleController(CR_DECISION);
+              is_next = true;
             }
+          }
+          if(is_next) {
+            step = 1;
+            counter = 341;
+            fadecounter = 255;
           }
         }
         if (animcounter < 59)
@@ -191,104 +233,178 @@ void game_intro () {
         else
           desarrow.y = 104;
         SDL_RenderCopy(g_state.renderer,arrow,&srcarrow,&desarrow);
-        while (SDL_PollEvent(&keystroke)) {
-          handleCommonControls(&keystroke);
-          if (keystroke.type == SDL_KEYDOWN) {
-            if ((keystroke.key.keysym.sym == SDLK_UP) || (keystroke.key.keysym.sym == SDLK_DOWN)) {
-              if (posarrow == 0)
-                posarrow = 1;
-              else
-                posarrow = 0;
+        while (SDL_PollEvent(&event)) {
+          handleCommonControls(&event);
+          bool is_next = false;
+          if (event.type == SDL_KEYDOWN) {
+            switch(event.key.keysym.sym) {
+              case SDLK_UP:
+              case SDLK_DOWN:
+                posarrow = !posarrow;
+                break;
+              case SDLK_SPACE:
+              case SDLK_RETURN:
+                is_next = true;
+                break;
             }
-            if ((keystroke.key.keysym.sym == SDLK_SPACE) || (keystroke.key.keysym.sym == SDLK_RETURN)) {
-              if (posarrow == 0) {
-                g_state.scene = GS_HISTORY;
-                g_state.level = 1;
-              }
-              if (posarrow == 1)
-                step = 4;
-              Mix_PlayChannel(-1,start,0);
+          }
+          else if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+            switch(event.cbutton.button) {
+              case SDL_CONTROLLER_BUTTON_DPAD_UP:
+              case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+                posarrow = !posarrow;
+                break;
+              case SDL_CONTROLLER_BUTTON_A:
+                rumbleController(CR_DECISION);
+                is_next = true;
+                break;
             }
+          }
+          else if (event.type == SDL_CONTROLLERAXISMOTION) {
+            if (event.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY
+              && (event.caxis.value < -10000 || event.caxis.value > 10000))
+              posarrow = !posarrow;
+          }
+          if(is_next) {
+            if (posarrow == 0) {
+              g_state.scene = GS_HISTORY;
+              g_state.level = 1;
+            }
+            if (posarrow == 1)
+              step = 4;
+            Mix_PlayChannel(-1,start,0);
           }
         }
       break;
       case 4: // show password selection
         SDL_RenderCopy(g_state.renderer,passwords,&srcscreen,&destscreen);
         SDL_RenderCopy(g_state.renderer,passwords,&srcselector,&destselector);
-        while (SDL_PollEvent(&keystroke)) {
-          handleCommonControls(&keystroke);
-          if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_RIGHT) {
-              if (destselector.x < 173) {
-                destselector.x += 16;
-                selectorpos ++;
+        while (SDL_PollEvent(&event)) {
+          handleCommonControls(&event);
+          bool is_right = false;
+          bool is_left = false;
+          bool is_up = false;
+          bool is_down = false;
+          bool is_decicision = false;
+
+          if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_LEFT)
+              is_left = true;
+            if (event.key.keysym.sym == SDLK_RIGHT)
+              is_right = true;
+            if (event.key.keysym.sym == SDLK_UP)
+              is_up = true;
+            if (event.key.keysym.sym == SDLK_DOWN)
+              is_down = true;
+            if (event.key.keysym.sym == SDLK_SPACE)
+              is_decicision = true;
+          }
+          else if (event.type == SDL_CONTROLLERBUTTONDOWN) {
+            switch(event.cbutton.button) {
+              case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+                is_left = true;
+                break;
+              case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+                is_right = true;
+                break;
+              case SDL_CONTROLLER_BUTTON_DPAD_UP:
+                is_up = true;
+                break;
+              case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+                is_down = true;
+                break;
+              case SDL_CONTROLLER_BUTTON_A:
+                is_decicision = true;
+                break;
+            }
+          }
+          else if (event.type == SDL_CONTROLLERAXISMOTION) {
+            switch(event.caxis.axis) {
+              case SDL_CONTROLLER_AXIS_LEFTX:
+                if (event.caxis.value < -10000)
+                  is_left = true;
+                else if (event.caxis.value > 10000)
+                  is_right = true;
+                break;
+              case SDL_CONTROLLER_AXIS_LEFTY:
+                if (event.caxis.value < -10000)
+                  is_up = true;
+                else if (event.caxis.value > 10000)
+                  is_down = true;
+                break;
+            }
+          }
+
+          if (is_left) {
+            if (destselector.x > 61) {
+              destselector.x -= 16;
+              selectorpos --;
+            }
+            else {
+              destselector.x += 112;
+              selectorpos += 7;
+            }
+          }
+          else if (is_right) {
+            if (destselector.x < 173) {
+              destselector.x += 16;
+              selectorpos ++;
+            }
+            else {
+              destselector.x -= 112;
+              selectorpos -= 7;
+            }
+          }
+          if (is_up) {
+            if (destselector.y > 101) {
+              destselector.y -= 16;
+              selectorpos -= 8;
+            }
+            else {
+              destselector.y += 64;
+              selectorpos += 32;
+            }
+          }
+          else if (is_down) {
+            if (destselector.y < 165) {
+              destselector.y += 16;
+              selectorpos += 8;
+            }
+            else {
+              destselector.y -= 64;
+              selectorpos -= 32;
+            }
+          }
+          if (is_decicision) {
+            if (selectorpos < 37) {
+              passint[n] = selectorpos;
+              if (n < 7)
+                n ++;
+              else
+                n = 1;
+              Mix_PlayChannel(-1,start,0);
+            }
+            if (selectorpos == 37) { /* Tilde */
+              passint[n] = 0;
+              if (n < 7)
+                n ++;
+              else
+                n = 1;
+              Mix_PlayChannel(-1,start,0);
+            }
+            if (selectorpos == 38) { /* Delete */
+              if (n > 0) {
+                passint[n-1] = 0;
+                n --;
               }
               else {
-                destselector.x -= 112;
-                selectorpos -= 7;
-              }
-            }
-            if (keystroke.key.keysym.sym == SDLK_LEFT) {
-              if (destselector.x > 61) {
-                destselector.x -= 16;
-                selectorpos --;
-              }
-              else {
-                destselector.x += 112;
-                selectorpos += 7;
-              }
-            }
-            if (keystroke.key.keysym.sym == SDLK_UP) {
-              if (destselector.y > 101) {
-                destselector.y -= 16;
-                selectorpos -= 8;
-              }
-              else {
-                destselector.y += 64;
-                selectorpos += 32;
-              }
-            }
-            if (keystroke.key.keysym.sym == SDLK_DOWN) {
-              if (destselector.y < 165) {
-                destselector.y += 16;
-                selectorpos += 8;
-              }
-              else {
-                destselector.y -= 64;
-                selectorpos -= 32;
-              }
-            }
-            if (keystroke.key.keysym.sym == SDLK_SPACE) {
-              if (selectorpos < 37) {
-                passint[n] = selectorpos;
-                if (n < 7)
-                  n ++;
-                else
-                  n = 1;
-                Mix_PlayChannel(-1,start,0);
-              }
-              if (selectorpos == 37) { /* Tilde */
+                n = 7;
                 passint[n] = 0;
-                if (n < 7)
-                  n ++;
-                else
-                  n = 1;
-                Mix_PlayChannel(-1,start,0);
               }
-              if (selectorpos == 38) { /* Delete */
-                if (n > 0) {
-                  passint[n-1] = 0;
-                  n --;
-                }
-                else {
-                  n = 7;
-                  passint[n] = 0;
-                }
-                Mix_PlayChannel(-1,poff,0);
-              }
-              if (selectorpos == 39) /* Ok key */
-                validatepass = 1;
+              Mix_PlayChannel(-1,poff,0);
             }
+            if (selectorpos == 39) /* Ok key */
+              validatepass = 1;
           }
         }
         // Showing characters

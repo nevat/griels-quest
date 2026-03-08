@@ -15,6 +15,7 @@ state_s g_state;
 // locals
 static SDL_Window *window;
 static bool fullscreen;
+static SDL_GameController *controller;
 
 int main(int argc, char* argv[]) {
   // set defaults
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]) {
   g_state.level = 1;
   window = NULL;
   fullscreen = false;
+  controller = NULL;
 
   // handle parameters
   for (int i = 1; i < argc; i++) {
@@ -58,11 +60,18 @@ int main(int argc, char* argv[]) {
   Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,1,4096);
   Mix_AllocateChannels(3);
 
-  // Init joystick
-  SDL_Joystick *joystick = NULL;
-  if (SDL_Init(SDL_INIT_JOYSTICK) >= 0) {
-    joystick = SDL_NumJoysticks() > 0 ? SDL_JoystickOpen(0) : NULL;
-    SDL_JoystickEventState(SDL_ENABLE);
+  // Init Game Controller
+  if (SDL_Init(SDL_INIT_GAMECONTROLLER) == 0) {
+    int nSticks = SDL_NumJoysticks();
+    for (int i = 0; i < nSticks; i++) {
+      if (SDL_IsGameController(i)) {
+        // open first one
+        controller = SDL_GameControllerOpen(i);
+        break;
+      }
+    }
+
+    SDL_GameControllerEventState(SDL_ENABLE);
   }
 
   SDL_ShowCursor(SDL_DISABLE); // Disable mouse
@@ -86,7 +95,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Cleaning
-  SDL_JoystickClose(joystick);
+  if(controller)
+    SDL_GameControllerClose(controller);
   SDL_DestroyRenderer(g_state.renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
@@ -100,4 +110,35 @@ void toggleFullScreen() {
 
   SDL_SetWindowFullscreen(window,
     fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+}
+
+void rumbleController(ControllerRumble type) {
+  if(!controller) return;
+
+  int low, high, duration;
+
+  switch(type) {
+    case CR_DECISION:
+      low = 900;
+      high = 600;
+      duration = 200;
+      break;
+    case CR_POW:
+      low = 1200;
+      high = 2000;
+      duration = 400;
+      break;
+    case CR_DEATH:
+      low = 1000;
+      high = 5000;
+      duration = 700;
+      break;
+    case CR_GRAIL:
+      low = 10000;
+      high = 20000;
+      duration = 1000;
+      break;
+  }
+
+  SDL_GameControllerRumble(controller, low, high, duration);
 }

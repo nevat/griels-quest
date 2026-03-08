@@ -6,5 +6,6 @@
 #include "common.h"
 
 void toggleFullScreen();
+void rumbleController(ControllerRumble type);
 
 #endif
