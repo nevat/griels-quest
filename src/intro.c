@@ -1,19 +1,31 @@
 /* intro.c */
 
-# include "intro.h"
+#include "intro.h"
+#include "main.h"
 
-void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
+static void handleCommonControls(SDL_Event *e) {
+  if (e->type == SDL_QUIT)
+    g_state.scene = GS_EXIT;
+  if (e->type == SDL_KEYDOWN) {
+    if (e->key.keysym.sym == SDLK_ESCAPE || e->key.keysym.sym == SDLK_q)
+      g_state.scene = GS_EXIT;
+    if (e->key.keysym.sym == SDLK_f)
+      toggleFullScreen();
+  }
+}
+
+void game_intro () {
 
   // Textures
-  SDL_Texture *blackbox = IMG_LoadTexture(renderer,DATADIR "/png/blackbox.png");
-  SDL_Texture *karoshi = IMG_LoadTexture(renderer,DATADIR "/png/karoshi.png");
-  SDL_Texture *blocks = IMG_LoadTexture(renderer,DATADIR "/png/blocks.png");
-  SDL_Texture *startscreen = IMG_LoadTexture(renderer,DATADIR "/png/startscreen.png");
-  SDL_Texture *startinfo = IMG_LoadTexture(renderer,DATADIR "/png/startinfo.png");
-  SDL_Texture *menu = IMG_LoadTexture(renderer,DATADIR "/png/menu.png");
-  SDL_Texture *arrow = IMG_LoadTexture(renderer,DATADIR "/png/fonts.png");
-  SDL_Texture *passwords = IMG_LoadTexture(renderer,DATADIR "/png/password.png");
-  SDL_Texture *fonts = IMG_LoadTexture(renderer,DATADIR "/png/fonts.png");
+  SDL_Texture *blackbox = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blackbox.png");
+  SDL_Texture *karoshi = IMG_LoadTexture(g_state.renderer,DATADIR "/png/karoshi.png");
+  SDL_Texture *blocks = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blocks.png");
+  SDL_Texture *startscreen = IMG_LoadTexture(g_state.renderer,DATADIR "/png/startscreen.png");
+  SDL_Texture *startinfo = IMG_LoadTexture(g_state.renderer,DATADIR "/png/startinfo.png");
+  SDL_Texture *menu = IMG_LoadTexture(g_state.renderer,DATADIR "/png/menu.png");
+  SDL_Texture *arrow = IMG_LoadTexture(g_state.renderer,DATADIR "/png/fonts.png");
+  SDL_Texture *passwords = IMG_LoadTexture(g_state.renderer,DATADIR "/png/password.png");
+  SDL_Texture *fonts = IMG_LoadTexture(g_state.renderer,DATADIR "/png/fonts.png");
   
   // Sounds
   Mix_Chunk *start = Mix_LoadWAV(DATADIR "/fx/fx_start.ogg");
@@ -49,34 +61,21 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
   uint8_t validatepass = 0;
   uint8_t i = 0;
   uint8_t result = 0;
-  uint8_t fullscreench = 0;
 
   // Loop
-  while (*state == 0) {
-    SDL_RenderClear(renderer);
-    
-    if (fullscreench == 1) { // Switch to fullscreen
-      SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-      fullscreench = 0;
-    }
+  while (g_state.scene == GS_INTRO) {
+    SDL_RenderClear(g_state.renderer);
     
     switch (step) {
       case 0: // Karoshi logo
         SDL_SetTextureAlphaMod(karoshi,fadecounter);
-        SDL_RenderCopy(renderer,karoshi,&srcscreen,&destscreen);
+        SDL_RenderCopy(g_state.renderer,karoshi,&srcscreen,&destscreen);
         counter ++;
         while (SDL_PollEvent(&keystroke)) {
-          if (keystroke.type == SDL_QUIT)
-            exit(0);
+          handleCommonControls(&keystroke);
           if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_ESCAPE)
-              exit(0);
-            if (keystroke.key.keysym.sym == SDLK_f)
-              fullscreench = 1;
-            if (keystroke.key.keysym.sym == SDLK_q)
-              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE) {
-              counter = 341;;
+              counter = 341;
               step = 1;
               fadecounter = 255;
             }
@@ -93,18 +92,11 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
       break;
       case 1: // Start screen
         SDL_SetTextureAlphaMod(startscreen,fadecounter);
-        SDL_RenderCopy(renderer,startscreen,&srcscreen,&destscreen);
+        SDL_RenderCopy(g_state.renderer,startscreen,&srcscreen,&destscreen);
         counter ++;
         while (SDL_PollEvent(&keystroke)) {
-          if (keystroke.type == SDL_QUIT)
-            exit(0);
+          handleCommonControls(&keystroke);
           if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_ESCAPE)
-              exit(0);
-            if (keystroke.key.keysym.sym == SDLK_f)
-              fullscreench = 1;
-            if (keystroke.key.keysym.sym == SDLK_q)
-              exit(0);
             if (keystroke.key.keysym.sym == SDLK_SPACE) {
               Mix_PlayChannel(-1,start,0);
               step = 3;
@@ -123,29 +115,22 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
       case 2: // Show instructions
         counter ++;
         while (SDL_PollEvent(&keystroke)) {
-          if (keystroke.type == SDL_QUIT)
-	    exit(0);
+          handleCommonControls(&keystroke);
           if (keystroke.type == SDL_KEYDOWN) {
-	    if (keystroke.key.keysym.sym == SDLK_ESCAPE)
-	        exit(0);
-	    if (keystroke.key.keysym.sym == SDLK_f)
-              fullscreench = 1;
-            if (keystroke.key.keysym.sym == SDLK_q)
-              exit(0);
-	    if (keystroke.key.keysym.sym == SDLK_SPACE) {
-	        step = 1;
-		counter = 341;
-		fadecounter = 255;
-	    }
+            if (keystroke.key.keysym.sym == SDLK_SPACE) {
+              step = 1;
+              counter = 341;
+              fadecounter = 255;
+            }
           }
         }
         if (animcounter < 59)
-	  animcounter ++;
+          animcounter ++;
         else
-	  animcounter = 0;
+          animcounter = 0;
         
         if ((counter > 1387) && (counter < 1473))
-	  fadecounter+=3;
+          fadecounter+=3;
         if ((counter > 1387) && (counter < 1989)) {
           srctext.y = 224;
           srctext.h = 20;
@@ -171,51 +156,44 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
           animcounter = 0;
         }
         
-        SDL_RenderCopy(renderer,startinfo,&srcscreen,&destscreen);
-        SDL_RenderCopy(renderer,startinfo,&srctext,&destext);
+        SDL_RenderCopy(g_state.renderer,startinfo,&srcscreen,&destscreen);
+        SDL_RenderCopy(g_state.renderer,startinfo,&srctext,&destext);
         // Show animations
         // Hero
         srcblocks.y = 32;
         srcblocks.x = (animcounter / 30) * 16 + 96;
         destblocks.x = 120;
         destblocks.y = 45;
-        SDL_RenderCopy(renderer,blocks,&srcblocks,&destblocks);
+        SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&destblocks);
         // Demon
         srcblocks.y = 16;
         srcblocks.x = (animcounter / 30) * 32 + 96;
         destblocks.x = 20;
         destblocks.y = 192;
-        SDL_RenderCopy(renderer,blocks,&srcblocks,&destblocks);
+        SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&destblocks);
         // Ogre
         srcblocks.x = (animcounter / 30) * 16 + 64;
         destblocks.y = 160;
-        SDL_RenderCopy(renderer,blocks,&srcblocks,&destblocks);
+        SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&destblocks);
         // Ghost
         srcblocks.x = (animcounter / 30) * 16 + 32;
         destblocks.y = 128;
-        SDL_RenderCopy(renderer,blocks,&srcblocks,&destblocks);
+        SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&destblocks);
         // Slime
         srcblocks.x = (animcounter / 30) * 16;
         destblocks.y = 96;
-        SDL_RenderCopy(renderer,blocks,&srcblocks,&destblocks);
+        SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&destblocks);
       break;
       case 3: // show menu
-        SDL_RenderCopy(renderer,menu,NULL,NULL);
+        SDL_RenderCopy(g_state.renderer,menu,NULL,NULL);
         if (posarrow == 0)
           desarrow.y = 88;
         else
           desarrow.y = 104;
-        SDL_RenderCopy(renderer,arrow,&srcarrow,&desarrow);
+        SDL_RenderCopy(g_state.renderer,arrow,&srcarrow,&desarrow);
         while (SDL_PollEvent(&keystroke)) {
-	  if (keystroke.type == SDL_QUIT)
-            exit(0);
+          handleCommonControls(&keystroke);
           if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_ESCAPE)
-              exit(0);
-            if (keystroke.key.keysym.sym == SDLK_f)
-              fullscreench = 1;
-            if (keystroke.key.keysym.sym == SDLK_q)
-              exit(0);
             if ((keystroke.key.keysym.sym == SDLK_UP) || (keystroke.key.keysym.sym == SDLK_DOWN)) {
               if (posarrow == 0)
                 posarrow = 1;
@@ -224,99 +202,92 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
             }
             if ((keystroke.key.keysym.sym == SDLK_SPACE) || (keystroke.key.keysym.sym == SDLK_RETURN)) {
               if (posarrow == 0) {
-                *state = 1;
-                *level = 1;
+                g_state.scene = GS_HISTORY;
+                g_state.level = 1;
               }
               if (posarrow == 1)
                 step = 4;
               Mix_PlayChannel(-1,start,0);
             }
+          }
         }
-      }
       break;
       case 4: // show password selection
-        SDL_RenderCopy(renderer,passwords,&srcscreen,&destscreen);
-        SDL_RenderCopy(renderer,passwords,&srcselector,&destselector);
+        SDL_RenderCopy(g_state.renderer,passwords,&srcscreen,&destscreen);
+        SDL_RenderCopy(g_state.renderer,passwords,&srcselector,&destselector);
         while (SDL_PollEvent(&keystroke)) {
-          if (keystroke.type == SDL_QUIT)
-	    exit(0);
+          handleCommonControls(&keystroke);
           if (keystroke.type == SDL_KEYDOWN) {
-            if (keystroke.key.keysym.sym == SDLK_ESCAPE)
-	      exit(0);
-	    if (keystroke.key.keysym.sym == SDLK_f)
-              fullscreench = 1;
-            if (keystroke.key.keysym.sym == SDLK_q)
-              exit(0);
             if (keystroke.key.keysym.sym == SDLK_RIGHT) {
-	      if (destselector.x < 173) {
-	        destselector.x += 16;
-	        selectorpos ++;
-	      }
-	      else {
-	        destselector.x -= 112;
-	        selectorpos -= 7;
-	      }
+              if (destselector.x < 173) {
+                destselector.x += 16;
+                selectorpos ++;
+              }
+              else {
+                destselector.x -= 112;
+                selectorpos -= 7;
+              }
             }
             if (keystroke.key.keysym.sym == SDLK_LEFT) {
-	      if (destselector.x > 61) {
-	        destselector.x -= 16;
-	        selectorpos --;
-	      }
-	      else {
-	        destselector.x += 112;
-	        selectorpos += 7;
-	      }
+              if (destselector.x > 61) {
+                destselector.x -= 16;
+                selectorpos --;
+              }
+              else {
+                destselector.x += 112;
+                selectorpos += 7;
+              }
             }
             if (keystroke.key.keysym.sym == SDLK_UP) {
-	      if (destselector.y > 101) {
-	        destselector.y -= 16;
-	        selectorpos -= 8;
-	      }
-	      else {
-	        destselector.y += 64;
-	        selectorpos += 32;
-	      }
+              if (destselector.y > 101) {
+                destselector.y -= 16;
+                selectorpos -= 8;
+              }
+              else {
+                destselector.y += 64;
+                selectorpos += 32;
+              }
             }
             if (keystroke.key.keysym.sym == SDLK_DOWN) {
-	      if (destselector.y < 165) {
+              if (destselector.y < 165) {
                 destselector.y += 16;
                 selectorpos += 8;
-                          }
-	      else {
-	        destselector.y -= 64;
-	        selectorpos -= 32;
-	      }
+              }
+              else {
+                destselector.y -= 64;
+                selectorpos -= 32;
+              }
             }
             if (keystroke.key.keysym.sym == SDLK_SPACE) {
-	      if (selectorpos < 37) {
-	        passint[n] = selectorpos;
-	        if (n < 7)
-	          n ++;
-	        else
-	          n = 1;
-	        Mix_PlayChannel(-1,start,0);
-	      }
-	      if (selectorpos == 37) { /* Tilde */
-	        passint[n] = 0;
-	        if (n < 7)
-	          n ++;
-	        else
-	          n = 1;
-	        Mix_PlayChannel(-1,start,0);
-	      }
-	      if (selectorpos == 38) { /* Delete */
-	        if (n > 0) {
-	          passint[n-1] = 0;
-	          n --;
-	        }
-	        else {
-	          n = 7;
-	          passint[n] = 0;
-	        }
-	        Mix_PlayChannel(-1,poff,0);
-	      }
-	      if (selectorpos == 39) /* Ok key */
-	        validatepass = 1;
+              if (selectorpos < 37) {
+                passint[n] = selectorpos;
+                if (n < 7)
+                  n ++;
+                else
+                  n = 1;
+                Mix_PlayChannel(-1,start,0);
+              }
+              if (selectorpos == 37) { /* Tilde */
+                passint[n] = 0;
+                if (n < 7)
+                  n ++;
+                else
+                  n = 1;
+                Mix_PlayChannel(-1,start,0);
+              }
+              if (selectorpos == 38) { /* Delete */
+                if (n > 0) {
+                  passint[n-1] = 0;
+                  n --;
+                }
+                else {
+                  n = 7;
+                  passint[n] = 0;
+                }
+                Mix_PlayChannel(-1,poff,0);
+              }
+              if (selectorpos == 39) /* Ok key */
+                validatepass = 1;
             }
           }
         }
@@ -341,7 +312,7 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
             }
             destletters.x = 64 + (i * 16);
             destletters.y = 64;
-            SDL_RenderCopy(renderer,fonts,&srcletters,&destletters);
+            SDL_RenderCopy(g_state.renderer,fonts,&srcletters,&destletters);
           }
         }
         /* Showing character position */
@@ -349,15 +320,15 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
         srcletters.y = 112;
         destletters.x = 64 + (n * 16);
         destletters.y = 80;
-        SDL_RenderCopy(renderer,fonts,&srcletters,&destletters);
+        SDL_RenderCopy(g_state.renderer,fonts,&srcletters,&destletters);
         /* Checking if password is correct */
         if (validatepass == 1) {
           result = passwvalidate(passint);
           validatepass = 0;
           if (result > 0) {
-            *level = result;
+            g_state.level = result;
             Mix_PlayChannel(-1,ding,0);
-            *state = 2;
+            g_state.scene = GS_GAME;
           }
           else
             Mix_PlayChannel(-1,error,0);
@@ -365,7 +336,7 @@ void game_intro (SDL_Window *screen, uint8_t *state, uint8_t *level) {
         break;
     }
     
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(g_state.renderer);
 
   }
 

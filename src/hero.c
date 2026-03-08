@@ -2,7 +2,7 @@
 
 # include "hero.h"
 
-void set_hero_init (struct hero *griel, uint8_t round) {
+void set_hero_init (hero_s *griel, uint8_t round) {
 
   switch (round) {
     case 0: griel->positionx = 7;
@@ -192,7 +192,7 @@ void set_hero_init (struct hero *griel, uint8_t round) {
 
 }
 
-void extralife (struct hero *griel, uint8_t *uplife) {
+void extralife (hero_s *griel, uint8_t *uplife) {
 
   if (griel->score > (5000 + (*uplife * 5000))) {
     *uplife += 1;
@@ -202,7 +202,7 @@ void extralife (struct hero *griel, uint8_t *uplife) {
 
 }
 
-void show_hero (struct hero *griel, uint8_t counter, SDL_Texture *blocks, uint8_t *round, uint8_t *step, uint16_t *waittime, uint8_t *soundblock, Mix_Chunk *giveup) {
+void show_hero (hero_s *griel, uint8_t counter, SDL_Texture *blocks, uint8_t *round, uint8_t *step, uint16_t *waittime, uint8_t *soundblock, Mix_Chunk *giveup) {
 
   SDL_Rect srchero = {96,32,16,16};
   SDL_Rect desthero = {0,0,16,16};
@@ -350,6 +350,6 @@ void show_hero (struct hero *griel, uint8_t counter, SDL_Texture *blocks, uint8_
   }
   desthero.x = griel->x;
   desthero.y = griel->y;
-  SDL_RenderCopy(renderer,blocks,&srchero,&desthero);
+  SDL_RenderCopy(g_state.renderer,blocks,&srchero,&desthero);
 
 }

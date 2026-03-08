@@ -2,7 +2,7 @@
 
 # include "hud.h"
 
-void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8_t round) {
+void show_hud (hero_s griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8_t round) {
 
   // Rects
   SDL_Rect srcfonts = {0,128,8,8};
@@ -25,7 +25,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
   }
   else
     srcfonts.x = 0;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   desfonts.x = 24;
   if (points > 99999) {
     srcfonts.x = (points / 100000) * 8;
@@ -33,7 +33,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
   }
   else
     srcfonts.x = 0;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   desfonts.x = 32;
   if (points > 9999) {
     srcfonts.x = (points / 10000) * 8;
@@ -41,7 +41,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
   }
   else
     srcfonts.x = 0;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   desfonts.x = 40;
   if (points > 999) {
     srcfonts.x = (points / 1000) * 8;
@@ -49,7 +49,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
   }
   else
     srcfonts.x = 0;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   desfonts.x = 48;
   if (points > 99) {
     srcfonts.x = (points / 100) * 8;
@@ -57,7 +57,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
   }
   else
     srcfonts.x = 0;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   desfonts.x = 56;
   if (points > 9) {
     srcfonts.x = (points / 10) * 8;
@@ -65,10 +65,10 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
   }
   else
     srcfonts.x = 0;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   desfonts.x = 64;
   srcfonts.x = (points) * 8;
-  SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+  SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
 
   // Show lifes
   for (i=1;i<4;i++) {
@@ -77,7 +77,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
       srcblocks.y = 32;
       desblocks.y = 0;
       desblocks.x = 112 + (16 * i);
-      SDL_RenderCopy(renderer,blocks,&srcblocks,&desblocks);
+      SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&desblocks);
     }
   }
 
@@ -87,7 +87,7 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
     desblocks.y = 0;
     srcblocks.y = 32;
     srcblocks.x = 0 + (16 * griel.object) - 16;
-    SDL_RenderCopy(renderer,blocks,&srcblocks,&desblocks);
+    SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&desblocks);
   }
 
   /* Show round number */
@@ -95,20 +95,20 @@ void show_hud (struct hero griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8
     desfonts.x = 208;
     desfonts.y = 8;
     srcfonts.x = 0;
-    SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+    SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
     desfonts.x = 216;
     srcfonts.x = (round + 1) * 8;
-    SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+    SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   }
   else {
     desfonts.x = 208;
     desfonts.y = 8;
     srcfonts.x = ((round + 1) / 10) * 8;
-    SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+    SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
     desfonts.x = 216;
     desfonts.y = 8;
     srcfonts.x = ((round + 1) - (((round + 1) / 10) * 10)) * 8;
-    SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+    SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
   }
 
 }

@@ -3,24 +3,56 @@
 // Started to migrate to SDL2 in 27/06/2025 (omg!)
 // Under GPL v3 license
 
-# include "main.h"
+#include "main.h"
+#include "intro.h"
+#include "history.h"
+#include "game.h"
+#include "ending.h"
 
-SDL_Renderer *renderer;
+// globals
+state_s g_state;
 
-int main() {
+// locals
+static SDL_Window *window;
+static bool fullscreen;
 
-  // SDL_Surface *screen = NULL;
-  uint8_t state = 0;
-  uint8_t level = 0;
-  uint8_t fullscreen = 0;
+int main(int argc, char* argv[]) {
+  // set defaults
+  g_state.renderer = NULL;
+  g_state.scene = GS_INTRO;
+  g_state.level = 1;
+  window = NULL;
+  fullscreen = false;
+
+  // handle parameters
+  for (int i = 1; i < argc; i++) {
+    if(strcmp(argv[i], "-f") == 0)
+      fullscreen = true;
+    if(strcmp(argv[i], "-w") == 0)
+      fullscreen = false;
+#if DEBUG
+    // allow jumping scenes
+    if(strcmp(argv[i], "-h") == 0)
+      g_state.scene = GS_HISTORY;
+    if(strcmp(argv[i], "-g") == 0)
+      g_state.scene = GS_GAME;
+    if(strcmp(argv[i], "-e") == 0)
+      g_state.scene = GS_ENDING;
+#endif
+  }
 
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); // Init SDL2
 
-  SDL_Window *screen = SDL_CreateWindow("Griel's Quest for the Sangraal v1.0",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,512,448,fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_RESIZABLE); // Creating window
+  int winflags = SDL_WINDOW_RESIZABLE;
+  if(fullscreen)
+    winflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+  window = SDL_CreateWindow("Griel's Quest for the Sangraal v1.0",
+    SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,SCREEN_W*2,SCREEN_H*2,
+    winflags); // Creating window
 
   // Create renderer
-  renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-  SDL_RenderSetLogicalSize(renderer,256,224);
+  g_state.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+  SDL_RenderSetLogicalSize(g_state.renderer,SCREEN_W,SCREEN_H);
 
   // Init audio
   Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,1,4096);
@@ -34,29 +66,38 @@ int main() {
   }
 
   SDL_ShowCursor(SDL_DISABLE); // Disable mouse
-  // system("xset r off"); // Disable repeat keys
 
   // Loading part of the game
-  while (state < 4) {
-    switch (state) {
-      case 0: game_intro (screen, &state, &level);
-	          break;
-      case 1: history (screen, &state);
-              break;
-      case 2: game (screen, &state, &level);
-              break;
-      case 3: ending (screen,&state);
-              break;
+  while (g_state.scene < GS_EXIT) {
+    switch (g_state.scene) {
+      case GS_INTRO:
+        game_intro ();
+        break;
+      case GS_HISTORY:
+        history ();
+        break;
+      case GS_GAME:
+        game ();
+        break;
+      case GS_ENDING:
+        ending ();
+        break;
     }
   }
 
   // Cleaning
   SDL_JoystickClose(joystick);
-  // SDL_DestroyTexture(target);
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(screen);
+  SDL_DestroyRenderer(g_state.renderer);
+  SDL_DestroyWindow(window);
   SDL_Quit();
 
   return 0; // Exit
 
+}
+
+void toggleFullScreen() {
+  fullscreen = !fullscreen;
+
+  SDL_SetWindowFullscreen(window,
+    fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }

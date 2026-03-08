@@ -1,26 +1,73 @@
 /* game.c */
 
-# include "game.h"
+#include "game.h"
+#include "main.h"
 
-void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
+static void handleControls (hero_s *griel) {
+  SDL_Event e;
+
+  while (SDL_PollEvent(&e)) {
+    if (e.type == SDL_QUIT)
+      g_state.scene = GS_EXIT;
+    if (e.type == SDL_KEYDOWN) {
+      if (e.key.keysym.sym == SDLK_ESCAPE) {
+        if ((griel->locked == 0) && (griel->deathanimation == 0)) {
+          griel->locked = 1;
+          griel->direction = 6;
+        }
+      }
+      if (e.key.keysym.sym == SDLK_UP) {
+        if ((griel->locked == 0) && (griel->positiony > 0)) {
+          griel->locked = 1;
+          griel->direction = 1;
+        }
+      }
+      if (e.key.keysym.sym == SDLK_DOWN) {
+        if ((griel->locked == 0) && (griel->positiony < 10)) {
+          griel->locked = 1;
+          griel->direction = 2;
+        }
+      }
+      if (e.key.keysym.sym == SDLK_LEFT) {
+        if ((griel->locked == 0) && (griel->positionx > 0)) {
+          griel->locked = 1;
+          griel->direction = 3;
+        }
+      }
+      if (e.key.keysym.sym == SDLK_RIGHT) {
+        if ((griel->locked == 0) && (griel->positionx < 15)) {
+          griel->locked = 1;
+          griel->direction = 4;
+        }
+      }
+      if (e.key.keysym.sym == SDLK_f)
+        toggleFullScreen();
+      if (e.key.keysym.sym == SDLK_q)
+        g_state.scene = GS_EXIT;
+    }
+  }
+
+}
+
+void game () {
 
     // Textures
-    SDL_Texture *roundscreen = IMG_LoadTexture(renderer,DATADIR "/png/round.png");
-    SDL_Texture *blocks = IMG_LoadTexture(renderer,DATADIR "/png/blocks.png");
-    SDL_Texture *headgame = IMG_LoadTexture(renderer,DATADIR "/png/gamehead.png");
-    SDL_Texture *fonts = IMG_LoadTexture(renderer,DATADIR "/png/fonts.png");
-    SDL_Texture *blackbox = IMG_LoadTexture(renderer,DATADIR "/png/blackbox.png");
-    SDL_Texture *gameoverscreen = IMG_LoadTexture(renderer,DATADIR "/png/gameover.png");
-    SDL_Texture *passscreen01 = IMG_LoadTexture(renderer,DATADIR "/png/passw1.png");
-    SDL_Texture *passscreen02 = IMG_LoadTexture(renderer,DATADIR "/png/passw2.png");
-    SDL_Texture *passscreen03 = IMG_LoadTexture(renderer,DATADIR "/png/passw3.png");
-    SDL_Texture *passscreen04 = IMG_LoadTexture(renderer,DATADIR "/png/passw4.png");
-    SDL_Texture *passscreen05 = IMG_LoadTexture(renderer,DATADIR "/png/passw5.png");
-    SDL_Texture *passscreen06 = IMG_LoadTexture(renderer,DATADIR "/png/passw6.png");
-    SDL_Texture *passscreen07 = IMG_LoadTexture(renderer,DATADIR "/png/passw7.png");
-    SDL_Texture *passscreen08 = IMG_LoadTexture(renderer,DATADIR "/png/passw8.png");
-    SDL_Texture *passscreen09 = IMG_LoadTexture(renderer,DATADIR "/png/passw9.png");
-    SDL_Texture *passscreen10 = IMG_LoadTexture(renderer,DATADIR "/png/passw10.png");
+    SDL_Texture *roundscreen = IMG_LoadTexture(g_state.renderer,DATADIR "/png/round.png");
+    SDL_Texture *blocks = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blocks.png");
+    SDL_Texture *headgame = IMG_LoadTexture(g_state.renderer,DATADIR "/png/gamehead.png");
+    SDL_Texture *fonts = IMG_LoadTexture(g_state.renderer,DATADIR "/png/fonts.png");
+    SDL_Texture *blackbox = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blackbox.png");
+    SDL_Texture *gameoverscreen = IMG_LoadTexture(g_state.renderer,DATADIR "/png/gameover.png");
+    SDL_Texture *passscreen01 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw1.png");
+    SDL_Texture *passscreen02 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw2.png");
+    SDL_Texture *passscreen03 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw3.png");
+    SDL_Texture *passscreen04 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw4.png");
+    SDL_Texture *passscreen05 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw5.png");
+    SDL_Texture *passscreen06 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw6.png");
+    SDL_Texture *passscreen07 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw7.png");
+    SDL_Texture *passscreen08 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw8.png");
+    SDL_Texture *passscreen09 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw9.png");
+    SDL_Texture *passscreen10 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/passw10.png");
 
     // Music & sounds
     Mix_Music *bsogame;
@@ -39,7 +86,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
     uint8_t fademode = 0;
     uint8_t i = 0;
     uint8_t j = 0;
-    uint8_t round = (*level - 1);
+    uint8_t round = (g_state.level - 1);
     uint16_t points = 0;
     uint8_t counter = 0;
     uint8_t animationtime = 0;
@@ -48,17 +95,13 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
     uint8_t uplife = 0;
     uint8_t soundblock = 0;
     uint8_t grieltouch = 0;
-    uint8_t fullscreench = 0;
 
     loaddata(map); // load map data
-
-    // Enable repeat keys: Not available in SDL2
-    // SDL_EnableKeyRepeat(30, 30);
     
     Mix_Volume(-1, MIX_MAX_VOLUME); // Volume to Max
 
     // init array
-    struct hero griel = {
+    hero_s griel = {
       .score = 0,
       .lifes = 3,
       .object = 0,
@@ -84,32 +127,32 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
     SDL_Rect desblocks = {0,0,16,16};
     SDL_Rect srctext = {0,0,256,0};
 
-    while (*state == 2) {
-        SDL_RenderClear(renderer);
+    while (g_state.scene == GS_GAME) {
+        SDL_RenderClear(g_state.renderer);
 	    if (counter < 58)
 	      counter ++;
 	    else
 	      counter = 0;
 	    switch (step) {
 	      case 0: // Show round screen
-	        *level = round + 1;
+	        g_state.level = round + 1;
 	        desfonts.x = 144;
 	        SDL_SetTextureAlphaMod(roundscreen,fadecounter);
 	        SDL_SetTextureAlphaMod(fonts,fadecounter);
-	        SDL_RenderCopy(renderer,roundscreen,NULL,NULL);
-	        if (*level < 10) {
+	        SDL_RenderCopy(g_state.renderer,roundscreen,NULL,NULL);
+	        if (g_state.level < 10) {
 	          srcfonts.x = 0;
-	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
-	          srcfonts.x = *level * 8;
+	          SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
+	          srcfonts.x = g_state.level * 8;
 	          desfonts.x = 152;
-	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+	          SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
 	        }
 	        else {
-	          srcfonts.x = (*level / 10) * 8;
-	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
-	          srcfonts.x = (*level - ((*level / 10) * 10)) * 8;
+	          srcfonts.x = (g_state.level / 10) * 8;
+	          SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
+	          srcfonts.x = (g_state.level - ((g_state.level / 10) * 10)) * 8;
 	          desfonts.x = 152;
-	          SDL_RenderCopy(renderer,fonts,&srcfonts,&desfonts);
+	          SDL_RenderCopy(g_state.renderer,fonts,&srcfonts,&desfonts);
 	        }
 	        if ((fademode == 0) && (fadecounter == 255))
 		  SDL_EventState(SDL_KEYDOWN, SDL_IGNORE); // Disable push keys until game start
@@ -155,7 +198,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	          // Checking score for extra life (every 5000 points), 4 lifes max.
 	          extralife (&griel, &uplife);
 	          // Show game screen
-	          SDL_RenderCopy(renderer,headgame,NULL,NULL);
+	          SDL_RenderCopy(g_state.renderer,headgame,NULL,NULL);
 	          // Show hud
 	          show_hud (griel, fonts, blocks, round);
 	          // Show titles
@@ -164,68 +207,64 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	          check_obstacles (&griel, round, map, kill, &grieltouch);
 	          // Griel touched ?
 	          if (grieltouch == 1)
-	            *state = 3;
+	            g_state.scene = GS_ENDING;
 	          // Show hero
 	          show_hero(&griel, counter, blocks, &round, &step, &waittime, &soundblock, giveup);
 	          // Key pressed
-	          controls(&griel,&fullscreench);
-	          if (fullscreench == 1) {
-                    SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-	            fullscreench = 0;
-	          }
+	          handleControls(&griel);
 	        break;
                 case 2: // gameover screen for 10 seconds
                   if (waittime < 600) {
                     waittime ++;
-                    SDL_RenderCopy(renderer,gameoverscreen,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,gameoverscreen,NULL,NULL);
                     if (waittime == 1)
                       Mix_PlayMusic(gameover, 0);
                   }
                   else {
-                    *state = 0;
+                    g_state.scene = GS_INTRO;
                     Mix_HaltMusic();
                   }
                 break;
 	        case 3: // show password info, with fade in & out
 	          if (round == 4) {
                     SDL_SetTextureAlphaMod(passscreen01,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen01,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen01,NULL,NULL);
 	          }
 	          if (round == 9) {
                     SDL_SetTextureAlphaMod(passscreen02,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen02,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen02,NULL,NULL);
 	          }
 	          if (round == 14) {
                     SDL_SetTextureAlphaMod(passscreen03,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen03,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen03,NULL,NULL);
 	          }
 	          if (round == 19) {
                     SDL_SetTextureAlphaMod(passscreen04,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen04,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen04,NULL,NULL);
 	          }
 	          if (round == 24) {
                     SDL_SetTextureAlphaMod(passscreen05,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen05,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen05,NULL,NULL);
 	          }
 	          if (round == 29) {
                     SDL_SetTextureAlphaMod(passscreen06,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen06,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen06,NULL,NULL);
 	          }
 	          if (round == 35) {
                     SDL_SetTextureAlphaMod(passscreen07,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen07,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen07,NULL,NULL);
 	          }
 	          if (round == 41) {
                     SDL_SetTextureAlphaMod(passscreen08,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen08,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen08,NULL,NULL);
 	          }
 	          if (round == 47) {
                     SDL_SetTextureAlphaMod(passscreen09,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen09,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen09,NULL,NULL);
 	          }
 	          if (round == 53) {
                     SDL_SetTextureAlphaMod(passscreen10,fadecounter);
-                    SDL_RenderCopy(renderer,passscreen10,NULL,NULL);
+                    SDL_RenderCopy(g_state.renderer,passscreen10,NULL,NULL);
 	          }
 	          if ((fademode == 0) && (fadecounter == 255))
 	            SDL_EventState(SDL_KEYDOWN, SDL_IGNORE);
@@ -246,7 +285,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 	        break;
 	    }
 
-	  SDL_RenderPresent(renderer);
+	  SDL_RenderPresent(g_state.renderer);
 
 	}
 
@@ -256,7 +295,6 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
     SDL_DestroyTexture(headgame);
     SDL_DestroyTexture(fonts);
     SDL_DestroyTexture(blackbox);
-    // SDL_DestroyTexture(window);
     SDL_DestroyTexture(gameoverscreen);
     SDL_DestroyTexture(passscreen01);
     SDL_DestroyTexture(passscreen02);
@@ -279,7 +317,7 @@ void game (SDL_Window *screen, uint8_t *state, uint8_t *level) {
 
 }
 
-void show_tiles (struct hero *griel, uint8_t *animationtime, uint8_t map[][11][16], SDL_Texture *blocks, uint8_t round, uint8_t counter, Mix_Chunk *key) {
+void show_tiles (hero_s *griel, uint8_t *animationtime, uint8_t map[][11][16], SDL_Texture *blocks, uint8_t round, uint8_t counter, Mix_Chunk *key) {
 
   SDL_Rect srcblocks = {0,0,16,16};
   SDL_Rect desblocks = {0,0,16,16};
@@ -327,14 +365,14 @@ void show_tiles (struct hero *griel, uint8_t *animationtime, uint8_t map[][11][1
         }
         desblocks.x = j * 16;
         desblocks.y = (i * 16) + 32;
-        SDL_RenderCopy(renderer,blocks,&srcblocks,&desblocks);
+        SDL_RenderCopy(g_state.renderer,blocks,&srcblocks,&desblocks);
       }
     }
   }
 
 }
 
-void check_obstacles (struct hero *griel, uint8_t round, uint8_t map[][11][16], Mix_Chunk *kill, uint8_t *grieltouch) {
+void check_obstacles (hero_s *griel, uint8_t round, uint8_t map[][11][16], Mix_Chunk *kill, uint8_t *grieltouch) {
 
   int deleteobject = 0;
   int target[2] = {0,0};
@@ -506,53 +544,6 @@ void check_obstacles (struct hero *griel, uint8_t round, uint8_t map[][11][16], 
   if ((map[round][griel->positiony][griel->positionx] == 26) && (griel->locked == 0)) {
     griel->direction = 5;
     griel->locked = 1;
-  }
-
-}
-
-void controls (struct hero *griel, uint8_t *fullscreench) {
-
-  SDL_Event keystroke;
-
-  while (SDL_PollEvent(&keystroke)) {
-    if (keystroke.type == SDL_QUIT)
-      exit(0);
-    if (keystroke.type == SDL_KEYDOWN) {
-      if (keystroke.key.keysym.sym == SDLK_ESCAPE) {
-        if ((griel->locked == 0) && (griel->deathanimation == 0)) {
-          griel->locked = 1;
-          griel->direction = 6;
-        }
-      }
-      if (keystroke.key.keysym.sym == SDLK_UP) {
-        if ((griel->locked == 0) && (griel->positiony > 0)) {
-          griel->locked = 1;
-          griel->direction = 1;
-        }
-      }
-      if (keystroke.key.keysym.sym == SDLK_DOWN) {
-        if ((griel->locked == 0) && (griel->positiony < 10)) {
-          griel->locked = 1;
-          griel->direction = 2;
-        }
-      }
-      if (keystroke.key.keysym.sym == SDLK_LEFT) {
-        if ((griel->locked == 0) && (griel->positionx > 0)) {
-          griel->locked = 1;
-          griel->direction = 3;
-        }
-      }
-      if (keystroke.key.keysym.sym == SDLK_RIGHT) {
-        if ((griel->locked == 0) && (griel->positionx < 15)) {
-          griel->locked = 1;
-          griel->direction = 4;
-        }
-      }
-      if (keystroke.key.keysym.sym == SDLK_f)
-        *fullscreench = 1;
-      if (keystroke.key.keysym.sym == SDLK_q)
-        exit(0);
-    }
   }
 
 }

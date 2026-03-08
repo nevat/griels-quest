@@ -1,15 +1,31 @@
 /* history.c */
 
-# include "history.h"
+#include "history.h"
+#include "main.h"
 
-void history (SDL_Window *screen, uint8_t *state) {
+static void handleControls() {
+  SDL_Event e;
+
+  while (SDL_PollEvent(&e)) {
+    if (e.type == SDL_QUIT)
+      g_state.scene = GS_EXIT;
+    if (e.type == SDL_KEYDOWN) {
+      if (e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q)
+        g_state.scene = GS_EXIT;
+      if (e.key.keysym.sym == SDLK_SPACE)
+        g_state.scene = GS_GAME;
+      if (e.key.keysym.sym == SDLK_f)
+        toggleFullScreen();
+    }
+  }
+}
+
+void history () {
 
   // Textures
-  SDL_Texture *pictures = IMG_LoadTexture(renderer,DATADIR "/png/howtoplay.png");
-  SDL_Texture *blackbox = IMG_LoadTexture(renderer,DATADIR "/png/blackbox.png");
-  SDL_Texture *texts = IMG_LoadTexture(renderer,DATADIR "/png/texts.png");
-
-  SDL_Event keystroke; // Keyboard
+  SDL_Texture *pictures = IMG_LoadTexture(g_state.renderer,DATADIR "/png/howtoplay.png");
+  SDL_Texture *blackbox = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blackbox.png");
+  SDL_Texture *texts = IMG_LoadTexture(g_state.renderer,DATADIR "/png/texts.png");
 
   Mix_Music *bso = Mix_LoadMUS(DATADIR "/music/history.ogg"); // Music
   Mix_Chunk *lol = Mix_LoadWAV(DATADIR "/fx/fx_hahaha.ogg"); // Sound
@@ -19,7 +35,6 @@ void history (SDL_Window *screen, uint8_t *state) {
   uint8_t direction = 0;
   uint16_t waittime = 0;
   uint8_t playmusic = 0;
-  uint8_t fullscreench = 0;
 
   // Rects
   SDL_Rect srctitle = {0,0,256,16};
@@ -39,27 +54,9 @@ void history (SDL_Window *screen, uint8_t *state) {
 
   // Loop
   
-  SDL_RenderClear(renderer);
-  
-  while (*state == 1) {
-    while (SDL_PollEvent(&keystroke)) {
-      if (keystroke.type == SDL_QUIT)
-        exit(0);
-      if (keystroke.type == SDL_KEYDOWN) {
-        if (keystroke.key.keysym.sym == SDLK_ESCAPE)
-          exit(0);
-        if (keystroke.key.keysym.sym == SDLK_q)
-          exit(0);
-        if (keystroke.key.keysym.sym == SDLK_SPACE)
-          *state = 2;
-        if (keystroke.key.keysym.sym == SDLK_f)
-          fullscreench = 1;
-      }
-    }
-    if (fullscreench == 1) {
-      SDL_SetWindowFullscreen(screen, fullscreench ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-      fullscreench = 0;
-    }
+  while (g_state.scene == GS_HISTORY) {
+    SDL_RenderClear(g_state.renderer);
+    handleControls();
     switch (step) {
       case 0: // show title
         if (direction == 0) {
@@ -84,8 +81,8 @@ void history (SDL_Window *screen, uint8_t *state) {
             waittime = 0;
           }
         }
-        SDL_RenderCopy(renderer,texts,&srctitle,&destitle);
-        SDL_RenderCopy(renderer,blackbox,&srcblackbox,&desblackbox);
+        SDL_RenderCopy(g_state.renderer,texts,&srctitle,&destitle);
+        SDL_RenderCopy(g_state.renderer,blackbox,&srcblackbox,&desblackbox);
       break;
       case 1: // show history 1
         if (waittime == 60) // Demon LOLed
@@ -94,8 +91,8 @@ void history (SDL_Window *screen, uint8_t *state) {
           playmusic = 1;
           Mix_PlayMusic(bso,0);
         }
-        SDL_RenderCopy(renderer,blackbox,NULL,NULL);
-        SDL_RenderCopy(renderer,pictures,&srcpicture,&despicture);
+        SDL_RenderCopy(g_state.renderer,blackbox,NULL,NULL);
+        SDL_RenderCopy(g_state.renderer,pictures,&srcpicture,&despicture);
         if (waittime < 180)
           waittime ++;
         if (waittime > 179) {
@@ -103,27 +100,27 @@ void history (SDL_Window *screen, uint8_t *state) {
             srcsent1.w += 1;
             destsent1.w = srcsent1.w;
           }
-          SDL_RenderCopy(renderer,texts,&srcsent1,&destsent1);
+          SDL_RenderCopy(g_state.renderer,texts,&srcsent1,&destsent1);
           if (srcsent1.w == 200) {
             if (srcsent2.w < 200) {
               srcsent2.w += 1;
               destsent2.w = srcsent2.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent2,&destsent2);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent2,&destsent2);
           }
           if (srcsent2.w == 200) {
             if (srcsent3.w < 200) {
               srcsent3.w += 1;
               destsent3.w = srcsent3.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent3,&destsent3);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent3,&destsent3);
           }
           if (srcsent3.w == 200) {
             if (srcsent4.w < 200) {
               srcsent4.w += 1;
               destsent4.w = srcsent4.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent4,&destsent4);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent4,&destsent4);
           }
           if (srcsent4.w == 200) {
             if (waittime < 600)
@@ -149,33 +146,33 @@ void history (SDL_Window *screen, uint8_t *state) {
         }
         break;
         case 2: // show history 2
-          SDL_RenderCopy(renderer,blackbox,NULL,NULL);
-          SDL_RenderCopy(renderer,pictures,&srcpicture,&despicture);
+          SDL_RenderCopy(g_state.renderer,blackbox,NULL,NULL);
+          SDL_RenderCopy(g_state.renderer,pictures,&srcpicture,&despicture);
           if (srcsent1.w < 215) {
             srcsent1.w += 1;
             destsent1.w = srcsent1.w;
           }
-          SDL_RenderCopy(renderer,texts,&srcsent1,&destsent1);
+          SDL_RenderCopy(g_state.renderer,texts,&srcsent1,&destsent1);
           if (srcsent1.w == 215) {
             if (srcsent2.w < 215) {
               srcsent2.w += 1;
               destsent2.w = srcsent2.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent2,&destsent2);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent2,&destsent2);
           }
           if (srcsent2.w == 215) {
             if (srcsent3.w < 215) {
               srcsent3.w += 1;
               destsent3.w = srcsent3.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent3,&destsent3);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent3,&destsent3);
           }
           if (srcsent3.w == 215) {
             if (srcsent4.w < 215) {
               srcsent4.w += 1;
               destsent4.w = srcsent4.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent4,&destsent4);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent4,&destsent4);
           }
           if (srcsent4.w == 215) {
             if (waittime < 420)
@@ -196,46 +193,46 @@ void history (SDL_Window *screen, uint8_t *state) {
           }
         break;
         case 3: // show history 3
-          SDL_RenderCopy(renderer,blackbox,NULL,NULL);
-          SDL_RenderCopy(renderer,pictures,&srcpicture,&despicture);
+          SDL_RenderCopy(g_state.renderer,blackbox,NULL,NULL);
+          SDL_RenderCopy(g_state.renderer,pictures,&srcpicture,&despicture);
           if (srcsent1.w < 215) {
             srcsent1.w += 1;
             destsent1.w = srcsent1.w;
           }
-          SDL_RenderCopy(renderer,texts,&srcsent1,&destsent1);
+          SDL_RenderCopy(g_state.renderer,texts,&srcsent1,&destsent1);
           if (srcsent1.w == 215) {
             if (srcsent2.w < 215) {
               srcsent2.w += 1;
               destsent2.w = srcsent2.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent2,&destsent2);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent2,&destsent2);
           }
           if (srcsent2.w == 215) {
             if (srcsent3.w < 215) {
               srcsent3.w += 1;
               destsent3.w = srcsent3.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent3,&destsent3);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent3,&destsent3);
           }
           if (srcsent3.w == 215) {
             if (srcsent4.w < 215) {
               srcsent4.w += 1;
               destsent4.w = srcsent4.w;
             }
-            SDL_RenderCopy(renderer,texts,&srcsent4,&destsent4);
+            SDL_RenderCopy(g_state.renderer,texts,&srcsent4,&destsent4);
           }
           if (srcsent4.w == 215) {
             if (waittime < 420)
               waittime ++;
             else {
-              *state = 2;
+              g_state.scene = GS_GAME;
               Mix_HaltMusic();
             }
           }
         break;
     }
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(g_state.renderer);
 
   }
 

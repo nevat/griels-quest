@@ -5,7 +5,6 @@
 
 #include "common.h"
 
-void history (SDL_Window *screen, uint8_t *state);
-extern SDL_Renderer *renderer;
+void history ();
 
 #endif
