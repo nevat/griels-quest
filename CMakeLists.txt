@@ -50,6 +50,9 @@ else()
 	set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/griels" CACHE PATH "Where the data files are installed")
 	target_compile_definitions(griels PRIVATE DATADIR="${DATADIR}")
 
+	option(APPIMAGE "Apply data relocation for AppImage distribution" OFF)
+	target_compile_definitions(griels PRIVATE $<$<BOOL:${APPIMAGE}>:APPIMAGE_BUILD>)
+
 	# libs
 	find_package(SDL2 REQUIRED)
 	find_package(SDL2_mixer QUIET)

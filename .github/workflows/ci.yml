@@ -99,7 +99,7 @@ jobs:
       - name: Build Griel's Quest
         run: |
           cmake -B build-release . -G Ninja -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=/usr
+            -DCMAKE_INSTALL_PREFIX=/usr -DAPPIMAGE=ON
           cmake --build build-release
 
       - name: Install into AppDir
