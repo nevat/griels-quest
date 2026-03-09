@@ -1,0 +1,197 @@
+name: CI
+
+on:
+  push:
+    branches: [master, feature/**, bugfix/**, pr/**]
+    tags:
+      - v[0-9].[0-9].[0-9]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    name: General preparations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Get version, tag and pull request info
+        id: vars
+        run: |
+          pull="no"
+          if [[ "${{ github.ref }}" == refs/heads/* ]]; then
+            # branch build
+            version="$(git describe --tags --long --always "$GITHUB_SHA")"
+          elif [[ "${{ github.ref }}" == refs/pull/* ]]; then
+            # pull request
+            pull="yes"
+            version="pull${{ github.event.number }}"
+          else
+            # tag
+            version="${{ github.ref_name }}"
+          fi
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "pull=${pull}" >> $GITHUB_OUTPUT
+      - name: Check version, tag and pull request info
+        run: |
+          echo "version = ${{ steps.vars.outputs.version }}"
+          echo "pull = ${{ steps.vars.outputs.pull }}"
+    outputs:
+      version: ${{ steps.vars.outputs.version }}
+      pull: ${{ steps.vars.outputs.pull }}
+
+  dist:
+    name: Distribution archives
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -yqq
+          sudo apt-get install -yqq git
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Generate Archives
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          git archive -o griels-${VERSION}.tar.gz --prefix=griels-${VERSION}/ ${GITHUB_SHA}
+          git archive -o griels-${VERSION}.zip --prefix=griels-${VERSION}/ ${GITHUB_SHA}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: griels-dist
+          path: griels-*.*
+
+  linux-appimage:
+    name: Build (Linux x86_64, AppImage)
+    needs: prepare
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -yqq
+          sudo apt-get install -yqq cmake ninja-build \
+            libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev patchelf
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build Griel's Quest
+        run: |
+          cmake -B build-release . -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build-release
+
+      - name: Install into AppDir
+        run: DESTDIR=AppDir/ cmake --install build-release
+
+      - name: Download linuxdeploy and appimagetool
+        run: |
+          curl -fsSL https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage -o linuxdeploy
+          curl -fsSL https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -o appimagetool
+          chmod +x linuxdeploy appimagetool
+
+      - name: Bundle libraries and create AppImage
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+          APPIMAGE_EXTRACT_AND_RUN: 1
+          NO_STRIP: 1
+        run: |
+          ./linuxdeploy --appdir AppDir \
+            --desktop-file AppDir/usr/share/applications/griels.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/48x48/apps/griels.png
+          ./appimagetool --no-appstream AppDir griels-${VERSION}-linux-x86_64.AppImage
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: griels-linux-appimage-x86_64
+          path: griels-*.AppImage
+
+  web-emscripten:
+    name: Build (Emscripten)
+    needs: prepare
+    runs-on: ubuntu-latest
+    container: emscripten/emsdk
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -yqq
+          sudo apt-get install -yqq build-essential cmake ninja-build
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build Griel's Quest
+        run: |
+          emcmake cmake -B build-web . -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-web
+          ls -l build-web/griels*
+
+      - name: Prepare artifact
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          mkdir griels-${VERSION}
+          cp build-web/*.{wasm,js,html,data} README.md COPYING griels-${VERSION}/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: griels-web
+          path: griels-*/
+
+# github pages
+
+  prepare-pages:
+    needs: web-emscripten
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: griels-web
+          path: web
+
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          # disable jekyll
+          touch _site/.nojekyll
+          mv web/griels-*/*.{wasm,js,html,data} _site
+          # autostart
+          ln -s griels.html _site/index.html
+
+      - name: Upload artifact to GitHub pages
+        uses: actions/upload-pages-artifact@v4
+
+  deploy-pages:
+    needs: prepare-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
