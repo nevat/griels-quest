@@ -1,6 +1,7 @@
 /* loading.c */
 
-# include "loading.h"
+#include <SDL_image.h>
+#include "loading.h"
 
 void loaddata (uint8_t map[][11][16]) {
 
@@ -38,22 +39,95 @@ void load_music(Mix_Music *bsogame, int round) {
 
   switch(round % 5) {
   case 0:
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage1.ogg");
+    bsogame = loadmus("stage1");
     break;
   case 1:
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage2.ogg");
+    bsogame = loadmus("stage2");
     break;
   case 2:
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage3.ogg");
+    bsogame = loadmus("stage3");
     break;
   case 3:
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage4.ogg");
+    bsogame = loadmus("stage4");
     break;
   case 4:
-    bsogame = Mix_LoadMUS(DATADIR "/music/stage5.ogg");
+    bsogame = loadmus("stage5");
     break;
   }
 
   Mix_PlayMusic(bsogame, -1); // play looped
 
+}
+
+static char* makepath(const char *folder, const char *file, const char *ext) {
+  int len = strlen(DATADIR) + 1; // sep
+  len += strlen(folder) + 1; // sep
+  len += strlen(file) + 1; // sep
+  len += strlen(ext) + 1; // null
+
+  char *result = malloc(len);
+  sprintf(result, "%s/%s/%s.%s", DATADIR, folder, file, ext);
+
+  return result;
+}
+
+SDL_Texture *loadtexture(const char *file) {
+  char *path = makepath("png", file, "png");
+
+  SDL_Texture *result = IMG_LoadTexture(g_state.renderer, path);
+
+  if(!result) fprintf(stderr, "Could not load %s!\n", path);
+
+  free(path);
+  return result;
+}
+
+Mix_Music *loadmus(const char *file) {
+  char *path = makepath("music", file, "ogg");
+
+  Mix_Music *result = Mix_LoadMUS(path);
+
+  if(!result) fprintf(stderr, "Could not load %s!\n", path);
+
+  free(path);
+  return result;
+}
+
+Mix_Chunk *loadwav(const char *file) {
+  char *path = makepath("fx", file, "ogg");
+
+  Mix_Chunk *result = Mix_LoadWAV(path);
+
+  if(!result) fprintf(stderr, "Could not load %s!\n", path);
+
+  free(path);
+  return result;
+}
+
+bool check_data() {
+  const int NUM_CHECKS = 4;
+
+  /* Check every kind of data */
+  const char* files[] = {
+    DATADIR "/png/startscreen.png",
+    DATADIR "/data/rounds.txt",
+    DATADIR "/music/history.ogg",
+    DATADIR "/fx/fx_hahaha.ogg"
+  };
+
+  /* Try to open each file */
+  int missing = NUM_CHECKS;
+  SDL_RWops *rw;
+  for(int i = 0; i < NUM_CHECKS; i++) {
+    rw = SDL_RWFromFile(files[i], "rb");
+    if (rw) {
+      SDL_RWclose(rw);
+      missing--;
+    }
+  }
+
+  /* Everything found */
+  if (!missing) return true;
+
+  return false;
 }

@@ -2,6 +2,7 @@
 
 #include "ending.h"
 #include "main.h"
+#include "loading.h"
 
 static void handleControls() {
   SDL_Event e;
@@ -43,13 +44,13 @@ static void handleControls() {
 void ending () {
 
   // Textures
-  SDL_Texture *ending1 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/ending1.png");
-  SDL_Texture *ending2 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/ending2.png");
-  SDL_Texture *ending3 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/ending3.png");
-  SDL_Texture *ending4 = IMG_LoadTexture(g_state.renderer,DATADIR "/png/theend.png");
+  SDL_Texture *ending1 = loadtexture("ending1");
+  SDL_Texture *ending2 = loadtexture("ending2");
+  SDL_Texture *ending3 = loadtexture("ending3");
+  SDL_Texture *ending4 = loadtexture("theend");
 
-  Mix_Chunk *argh = Mix_LoadWAV(DATADIR "/fx/fx_uaaah.ogg"); // Sound
-  Mix_Music *bso = Mix_LoadMUS(DATADIR "/music/ending.ogg"); // Music
+  Mix_Chunk *argh = loadwav("fx_uaaah"); // Sound
+  Mix_Music *bso = loadmus("ending"); // Music
 
   // Variables
   uint8_t step = 0;

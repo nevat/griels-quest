@@ -2,6 +2,7 @@
 
 #include "intro.h"
 #include "main.h"
+#include "loading.h"
 
 static void handleCommonControls(SDL_Event *e) {
   if (e->type == SDL_QUIT)
@@ -32,21 +33,21 @@ static void handleCommonControls(SDL_Event *e) {
 void game_intro () {
 
   // Textures
-  SDL_Texture *blackbox = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blackbox.png");
-  SDL_Texture *karoshi = IMG_LoadTexture(g_state.renderer,DATADIR "/png/karoshi.png");
-  SDL_Texture *blocks = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blocks.png");
-  SDL_Texture *startscreen = IMG_LoadTexture(g_state.renderer,DATADIR "/png/startscreen.png");
-  SDL_Texture *startinfo = IMG_LoadTexture(g_state.renderer,DATADIR "/png/startinfo.png");
-  SDL_Texture *menu = IMG_LoadTexture(g_state.renderer,DATADIR "/png/menu.png");
-  SDL_Texture *arrow = IMG_LoadTexture(g_state.renderer,DATADIR "/png/fonts.png");
-  SDL_Texture *passwords = IMG_LoadTexture(g_state.renderer,DATADIR "/png/password.png");
-  SDL_Texture *fonts = IMG_LoadTexture(g_state.renderer,DATADIR "/png/fonts.png");
+  SDL_Texture *blackbox = loadtexture("blackbox");
+  SDL_Texture *karoshi = loadtexture("karoshi");
+  SDL_Texture *blocks = loadtexture("blocks");
+  SDL_Texture *startscreen = loadtexture("startscreen");
+  SDL_Texture *startinfo = loadtexture("startinfo");
+  SDL_Texture *menu = loadtexture("menu");
+  SDL_Texture *arrow = loadtexture("fonts");
+  SDL_Texture *passwords = loadtexture("password");
+  SDL_Texture *fonts = loadtexture("fonts");
   
   // Sounds
-  Mix_Chunk *start = Mix_LoadWAV(DATADIR "/fx/fx_start.ogg");
-  Mix_Chunk *poff = Mix_LoadWAV(DATADIR "/fx/fx_poff.ogg");
-  Mix_Chunk *error = Mix_LoadWAV(DATADIR "/fx/fx_error.ogg");
-  Mix_Chunk *ding = Mix_LoadWAV(DATADIR "/fx/fx_ding.ogg");
+  Mix_Chunk *start = loadwav("fx_start");
+  Mix_Chunk *poff = loadwav("fx_poff");
+  Mix_Chunk *error = loadwav("fx_error");
+  Mix_Chunk *ding = loadwav("fx_ding");
 
   SDL_Event event; // Keyboard or Controller
 

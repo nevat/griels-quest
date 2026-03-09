@@ -8,6 +8,7 @@
 #include "history.h"
 #include "game.h"
 #include "ending.h"
+#include "loading.h"
 
 // globals
 state_s g_state;
@@ -45,6 +46,20 @@ int main(int argc, char* argv[]) {
   }
 
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); // Init SDL2
+
+  /* Missing data files, exit with error */
+  if(!check_data()) {
+    const char* errormsg = "Cannot find data!\nFiles are expected under \"" DATADIR
+      "\",\nbut nothing was found.\n\nPlease check your installation.";
+
+    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, gametitle, errormsg, NULL)) {
+      /* Fallback error message to terminal */
+      printf("ERROR: %s\n", errormsg);
+    }
+
+    SDL_Quit();
+    return 1;
+  }
 
   int winflags = SDL_WINDOW_RESIZABLE;
   if(fullscreen)

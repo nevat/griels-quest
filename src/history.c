@@ -2,6 +2,7 @@
 
 #include "history.h"
 #include "main.h"
+#include "loading.h"
 
 static void handleControls() {
   SDL_Event e;
@@ -43,12 +44,12 @@ static void handleControls() {
 void history () {
 
   // Textures
-  SDL_Texture *pictures = IMG_LoadTexture(g_state.renderer,DATADIR "/png/howtoplay.png");
-  SDL_Texture *blackbox = IMG_LoadTexture(g_state.renderer,DATADIR "/png/blackbox.png");
-  SDL_Texture *texts = IMG_LoadTexture(g_state.renderer,DATADIR "/png/texts.png");
+  SDL_Texture *pictures = loadtexture("howtoplay");
+  SDL_Texture *blackbox = loadtexture("blackbox");
+  SDL_Texture *texts = loadtexture("texts");
 
-  Mix_Music *bso = Mix_LoadMUS(DATADIR "/music/history.ogg"); // Music
-  Mix_Chunk *lol = Mix_LoadWAV(DATADIR "/fx/fx_hahaha.ogg"); // Sound
+  Mix_Music *bso = loadmus("history"); // Music
+  Mix_Chunk *lol = loadwav("fx_hahaha"); // Sound
 
   //Variables
   uint8_t step = 0;
