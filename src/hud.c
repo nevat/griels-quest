@@ -11,7 +11,7 @@ void show_hud (hero_s griel, SDL_Texture *fonts, SDL_Texture *blocks, uint8_t ro
   SDL_Rect desblocks = {0,0,16,16};
 
   // Variables
-  uint16_t points = 0;
+  uint points = 0;
   uint8_t i = 0;
 
   // Show score

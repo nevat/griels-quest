@@ -1,1 +1,7 @@
 griels
+
+*.o
+*.elf
+
+/build/
+/build-*/

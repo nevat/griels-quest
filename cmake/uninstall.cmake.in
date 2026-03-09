@@ -1,0 +1,42 @@
+if(NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
+  message(FATAL_ERROR "Cannot find install manifest: @CMAKE_BINARY_DIR@/install_manifest.txt")
+endif()
+
+# remove installed files
+file(READ "@CMAKE_BINARY_DIR@/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
+foreach(file ${files})
+  set(f "$ENV{DESTDIR}${file}")
+  message(STATUS "Uninstalling ${f}")
+  if(IS_SYMLINK "${f}" OR EXISTS "${f}")
+    execute_process(
+      COMMAND "@CMAKE_COMMAND@" -E rm -- "${f}"
+      OUTPUT_VARIABLE rm_out
+      RESULT_VARIABLE rm_retval)
+    if(NOT "${rm_retval}" STREQUAL 0)
+      message(FATAL_ERROR "Problem when removing ${f}")
+    endif()
+  else()
+    message(STATUS "File ${f} does not exist.")
+  endif()
+endforeach()
+
+# remove data directories
+set(dirs "data;fx;music;png")
+foreach(dir ${dirs})
+  set(d "$ENV{DESTDIR}@DATADIR@/${dir}")
+  message(STATUS "Uninstalling ${d}")
+  if(IS_SYMLINK "${d}" OR EXISTS "${d}")
+    execute_process(
+      COMMAND "@CMAKE_COMMAND@" -E remove_directory "${d}"
+      OUTPUT_VARIABLE rm_out
+      RESULT_VARIABLE rm_retval)
+    if(NOT "${rm_retval}" STREQUAL 0)
+      message(FATAL_ERROR "Problem when removing ${d}")
+    endif()
+  else()
+    message(STATUS "Directory ${d} does not exist.")
+  endif()
+endforeach()
+
+message(STATUS "You need to remove the data directory $ENV{DESTDIR}@DATADIR@ manually")

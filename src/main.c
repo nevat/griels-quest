@@ -92,7 +92,8 @@ int main(int argc, char* argv[]) {
   SDL_ShowCursor(SDL_DISABLE); // Disable mouse
 
   // Loading part of the game
-  while (g_state.scene < GS_EXIT) {
+  bool running = true;
+  while (running) {
     switch (g_state.scene) {
       case GS_INTRO:
         setTitle("Intro", 0);
@@ -108,6 +109,10 @@ int main(int argc, char* argv[]) {
       case GS_ENDING:
         setTitle("Ending", 0);
         ending ();
+        break;
+      case GS_EXIT:
+      default:
+        running = false;
         break;
     }
   }
@@ -136,6 +141,7 @@ void rumbleController(ControllerRumble type) {
   int low, high, duration;
 
   switch(type) {
+    default:
     case CR_DECISION:
       low = 900;
       high = 600;

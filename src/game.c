@@ -158,7 +158,7 @@ void game () {
     SDL_Texture *passscreen10 = loadtexture("passw10");
 
     // Music & sounds
-    Mix_Music *bsogame;
+    Mix_Music *bsogame = NULL;
     Mix_Music *gameover = loadmus("gameover");
     Mix_Chunk *stageclear = loadwav("stageclear");
     Mix_Chunk *giveup = loadwav("fx_giveup");
@@ -172,13 +172,9 @@ void game () {
     uint16_t waittime = 0;
     uint16_t fadecounter = 0;
     uint8_t fademode = 0;
-    uint8_t i = 0;
-    uint8_t j = 0;
     uint8_t round = (g_state.level - 1);
-    uint16_t points = 0;
     uint8_t counter = 0;
     uint8_t animationtime = 0;
-    uint8_t pausa = 0;
     uint8_t loadoninit = 0;
     uint8_t uplife = 0;
     uint8_t soundblock = 0;
@@ -211,9 +207,6 @@ void game () {
     // Rects
     SDL_Rect srcfonts = {0,128,8,8};
     SDL_Rect desfonts = {136,96,8,8};
-    SDL_Rect srcblocks = {0,0,16,16};
-    SDL_Rect desblocks = {0,0,16,16};
-    SDL_Rect srctext = {0,0,256,0};
 
     while (g_state.scene == GS_GAME) {
         SDL_RenderClear(g_state.renderer);

@@ -482,7 +482,7 @@ uint8_t passwvalidate (uint8_t passint[]) {
     n = (passint[2] - 27) * 10 + (passint[3] - 27);
 
     // validate
-    if(n < 0 || n > 58)
+    if(n > 58)
       n = 0;
   }
 #endif
