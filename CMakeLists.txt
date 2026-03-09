@@ -26,32 +26,52 @@ add_executable(griels
 target_compile_options(griels PRIVATE -Wall -Wextra)
 target_compile_definitions(griels PRIVATE $<$<CONFIG:Debug>:DEBUG>)
 
-# options
-include(GNUInstallDirs)
-set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/griels" CACHE PATH "Where the data files are installed")
-target_compile_definitions(griels PRIVATE DATADIR="${DATADIR}")
+if(EMSCRIPTEN)
+	# emscripten ships "ports" of SDL2 libraries, no linking necessary
+	list(APPEND SDLPORTS --use-port=sdl2 --use-port=sdl2_mixer:formats=ogg
+		--use-port=sdl2_image:formats=png)
+	target_compile_options(griels PRIVATE ${SDLPORTS} -flto)
+	set_target_properties(griels PROPERTIES SUFFIX ".html")
+	set(JS_SHELL "${CMAKE_CURRENT_SOURCE_DIR}/cmake/shell.html.in")
+	set_source_files_properties("src/main.c" PROPERTIES OBJECT_DEPENDS "${JS_SHELL}")
+	target_link_options(griels BEFORE PRIVATE
+		-sMINIFY_HTML=0 -flto ${SDLPORTS} -sEXIT_RUNTIME=1 -sASYNCIFY -sASSERTIONS
+		-sENVIRONMENT=web --closure 1 -sNO_DISABLE_EXCEPTION_CATCHING
+		--shell-file=${JS_SHELL} --preload-file=${CMAKE_CURRENT_BINARY_DIR}/data@/data)
 
-# libs
-find_package(SDL2 REQUIRED)
-find_package(SDL2_mixer REQUIRED)
-find_package(SDL2_image REQUIRED)
-target_link_libraries(griels PRIVATE
-	SDL2::SDL2 SDL2_mixer::SDL2_mixer SDL2_image::SDL2_image)
+	# custom data directory
+	set(DATADIR "/data")
+	file(COPY data fx music png DESTINATION data)
+	target_compile_definitions(griels PRIVATE DATADIR="${DATADIR}")
+else()
+	include(GNUInstallDirs)
 
-# installation
-install(TARGETS griels RUNTIME DESTINATION bin)
-install(FILES griels.desktop DESTINATION share/applications)
-install(FILES png/icon.png DESTINATION share/pixmaps RENAME griels.png)
-install(FILES png/icon.png DESTINATION share/icons/hicolor/48x48/apps RENAME griels.png)
-install(DIRECTORY data fx music png DESTINATION ${DATADIR})
+	# options
+	set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/griels" CACHE PATH "Where the data files are installed")
+	target_compile_definitions(griels PRIVATE DATADIR="${DATADIR}")
 
-# uninstallation
-configure_file(
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-	IMMEDIATE @ONLY)
-add_custom_target(uninstall
-	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+	# libs
+	find_package(SDL2 REQUIRED)
+	find_package(SDL2_mixer REQUIRED)
+	find_package(SDL2_image REQUIRED)
+	target_link_libraries(griels PRIVATE
+		SDL2::SDL2 SDL2_mixer::SDL2_mixer SDL2_image::SDL2_image)
+
+	# installation
+	install(TARGETS griels RUNTIME DESTINATION bin)
+	install(FILES griels.desktop DESTINATION share/applications)
+	install(FILES png/icon.png DESTINATION share/pixmaps RENAME griels.png)
+	install(FILES png/icon.png DESTINATION share/icons/hicolor/48x48/apps RENAME griels.png)
+	install(DIRECTORY data fx music png DESTINATION ${DATADIR})
+
+	# uninstallation
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake.in"
+		"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+		IMMEDIATE @ONLY)
+	add_custom_target(uninstall
+		COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()
 
 # packaging
 set(CPACK_GENERATOR "ZIP;TGZ")
