@@ -224,6 +224,7 @@ void game () {
 	      case 0: // Show round screen
           handleQuit();
 	        g_state.level = round + 1;
+          setTitle("Round", g_state.level);
 	        desfonts.x = 144;
 	        SDL_SetTextureAlphaMod(roundscreen,fadecounter);
 	        SDL_SetTextureAlphaMod(fonts,fadecounter);
@@ -306,6 +307,7 @@ void game () {
 	        break;
                 case 2: // gameover screen for 10 seconds
                   handleQuit();
+                  setTitle("Game Over", 0);
                   if (waittime < 600) {
                     waittime ++;
                     SDL_RenderCopy(g_state.renderer,gameoverscreen,NULL,NULL);
@@ -318,7 +320,8 @@ void game () {
                   }
                 break;
 	        case 3: // show password info, with fade in & out
-            handleQuit();
+                  handleQuit();
+                  setTitle("Password", (round + 1) / 5);
 	          if (round == 4) {
                     SDL_SetTextureAlphaMod(passscreen01,fadecounter);
                     SDL_RenderCopy(g_state.renderer,passscreen01,NULL,NULL);

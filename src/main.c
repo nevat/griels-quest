@@ -16,6 +16,7 @@ state_s g_state;
 static SDL_Window *window;
 static bool fullscreen;
 static SDL_GameController *controller;
+static const char *gametitle = "Griel's Quest for the Sangraal v" VERSION;
 
 int main(int argc, char* argv[]) {
   // set defaults
@@ -48,9 +49,8 @@ int main(int argc, char* argv[]) {
   int winflags = SDL_WINDOW_RESIZABLE;
   if(fullscreen)
     winflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-  window = SDL_CreateWindow("Griel's Quest for the Sangraal v1.0",
-    SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,SCREEN_W*2,SCREEN_H*2,
-    winflags); // Creating window
+  window = SDL_CreateWindow(gametitle, SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED,SCREEN_W*2,SCREEN_H*2, winflags); // Creating window
 
   // Create renderer
   g_state.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
@@ -80,15 +80,18 @@ int main(int argc, char* argv[]) {
   while (g_state.scene < GS_EXIT) {
     switch (g_state.scene) {
       case GS_INTRO:
+        setTitle("Intro", 0);
         game_intro ();
         break;
       case GS_HISTORY:
+        setTitle("History", 0);
         history ();
         break;
       case GS_GAME:
         game ();
         break;
       case GS_ENDING:
+        setTitle("Ending", 0);
         ending ();
         break;
     }
@@ -141,4 +144,20 @@ void rumbleController(ControllerRumble type) {
   }
 
   SDL_GameControllerRumble(controller, low, high, duration);
+}
+
+void setTitle(const char *title, int round) {
+  static char buf[64];
+  strcpy(buf, gametitle);
+
+  if(title) {
+    strcat(buf, " - ");
+    strcat(buf, title);
+  }
+
+  if(round > 0) {
+    sprintf(buf + strlen(buf), " %02d", round);
+  }
+
+  SDL_SetWindowTitle(window, buf);
 }

@@ -13,6 +13,7 @@
 
 #define SCREEN_W 256
 #define SCREEN_H 224
+#define VERSION "1.0.1"
 
 // custom types
 

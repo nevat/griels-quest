@@ -7,5 +7,6 @@
 
 void toggleFullScreen();
 void rumbleController(ControllerRumble type);
+void setTitle(const char *title, int round);
 
 #endif
