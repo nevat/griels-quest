@@ -8,6 +8,7 @@ year 1990 (only on Japan). In 2005 was ported to MSX1 systems by Karoshi Corp.
 This version is a port of MSX1 version of the game to the GNU/Linux systems.
 Featuring all the levels, objects and enemies. The program is written in
 C language with the help of SDL2 libraries.
+You can test it right [inside your web browser][web port].
 
 ## KEYS
 
@@ -44,6 +45,8 @@ As root, install the game with:
 A icon will appear in your application menu, in game section.
 Alternatively you can run the game with the order "griels".
 
+[![Play in Browser][web badge]][web port]
+
 ## UNINSTALLATION FROM SOURCE
 
 Enter the directory and run (as root):
@@ -54,3 +57,6 @@ Enter the directory and run (as root):
 
 The code is licensed under the GNU GPL version 3, see COPYING file for
 reference. Anyone can download, see, change and redistribute the code.
+
+[web badge]: https://img.shields.io/badge/Play_in-Browser-blue?style=plastic
+[web port]: https://nevat.github.io/griels-quest

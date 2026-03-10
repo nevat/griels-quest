@@ -3,12 +3,35 @@
 #include <SDL_image.h>
 #include "loading.h"
 
+static char* makepath(const char *folder, const char *file, const char *ext) {
+  int len = 0;
+  const char *appdir = "";
+
+#if APPIMAGE_BUILD
+  // get the relocated root dir
+  appdir = getenv("APPDIR");
+  if (!appdir) appdir = ".";
+  len += strlen(appdir);
+#endif
+
+  len += strlen(DATADIR) + 1; // sep
+  len += strlen(folder) + 1; // sep
+  len += strlen(file) + 1; // sep
+  len += strlen(ext) + 1; // null
+
+  char *result = malloc(len);
+  sprintf(result, "%s%s/%s/%s.%s", appdir, DATADIR, folder, file, ext);
+
+  return result;
+}
+
 void loaddata (uint8_t map[][11][16]) {
 
   uint8_t i = 0;
   uint8_t j = 0;
   uint k = 0;
-  FILE *datafile = fopen(DATADIR "/data/rounds.txt", "r");
+  char *path = makepath("data", "rounds", "txt");
+  FILE *datafile = fopen(path, "r");
   char line[49];
   char temp[3];
   temp[2] = 0;
@@ -28,7 +51,7 @@ void loaddata (uint8_t map[][11][16]) {
   }
 
   fclose(datafile);
-
+  free(path);
 }
 
 void load_music(Mix_Music *bsogame, int round) {
@@ -57,18 +80,6 @@ void load_music(Mix_Music *bsogame, int round) {
 
   Mix_PlayMusic(bsogame, -1); // play looped
 
-}
-
-static char* makepath(const char *folder, const char *file, const char *ext) {
-  int len = strlen(DATADIR) + 1; // sep
-  len += strlen(folder) + 1; // sep
-  len += strlen(file) + 1; // sep
-  len += strlen(ext) + 1; // null
-
-  char *result = malloc(len);
-  sprintf(result, "%s/%s/%s.%s", DATADIR, folder, file, ext);
-
-  return result;
 }
 
 SDL_Texture *loadtexture(const char *file) {
@@ -108,12 +119,11 @@ bool check_data() {
   const int NUM_CHECKS = 4;
 
   /* Check every kind of data */
-  const char* files[] = {
-    DATADIR "/png/startscreen.png",
-    DATADIR "/data/rounds.txt",
-    DATADIR "/music/history.ogg",
-    DATADIR "/fx/fx_hahaha.ogg"
-  };
+  char* files[NUM_CHECKS];
+  files[0] = makepath("png", "startscreen", "png");
+  files[1] = makepath("data", "rounds", "txt");
+  files[2] = makepath("music", "history", "ogg");
+  files[3] = makepath("fx", "fx_hahaha", "ogg");
 
   /* Try to open each file */
   int missing = NUM_CHECKS;
@@ -124,10 +134,8 @@ bool check_data() {
       SDL_RWclose(rw);
       missing--;
     }
+    free(files[i]);
   }
 
-  /* Everything found */
-  if (!missing) return true;
-
-  return false;
+  return (missing == 0);
 }

@@ -50,10 +50,25 @@ else()
 	set(DATADIR "${CMAKE_INSTALL_PREFIX}/share/griels" CACHE PATH "Where the data files are installed")
 	target_compile_definitions(griels PRIVATE DATADIR="${DATADIR}")
 
+	option(APPIMAGE "Apply data relocation for AppImage distribution" OFF)
+	target_compile_definitions(griels PRIVATE $<$<BOOL:${APPIMAGE}>:APPIMAGE_BUILD>)
+
 	# libs
 	find_package(SDL2 REQUIRED)
-	find_package(SDL2_mixer REQUIRED)
-	find_package(SDL2_image REQUIRED)
+	find_package(SDL2_mixer QUIET)
+	find_package(SDL2_image QUIET)
+	# on old systems there may be cmake files missing
+	if(NOT SDL2_mixer_FOUND OR NOT SDL2_image_FOUND)
+		include(FindPkgConfig)
+		if(NOT SDL2_mixer_FOUND)
+			pkg_check_modules(SDL2_mixer REQUIRED IMPORTED_TARGET SDL2_mixer)
+			add_library(SDL2_mixer::SDL2_mixer ALIAS PkgConfig::SDL2_mixer)
+		endif()
+		if(NOT SDL2_image_FOUND)
+			pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
+			add_library(SDL2_image::SDL2_image ALIAS PkgConfig::SDL2_image)
+		endif()
+	endif()
 	target_link_libraries(griels PRIVATE
 		SDL2::SDL2 SDL2_mixer::SDL2_mixer SDL2_image::SDL2_image)
 
