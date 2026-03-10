@@ -165,6 +165,8 @@ jobs:
 
   prepare-pages:
     needs: web-emscripten
+    # run only on master branch in main repo
+    if: ${{ github.ref == 'refs/heads/master' && github.repository_owner == 'nevat' }}
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
