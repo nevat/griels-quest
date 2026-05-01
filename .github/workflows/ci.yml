@@ -185,7 +185,7 @@ jobs:
           ln -s griels.html _site/index.html
 
       - name: Upload artifact to GitHub pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
 
   deploy-pages:
     needs: prepare-pages
